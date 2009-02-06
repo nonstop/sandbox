@@ -1,0 +1,7 @@
+headers = 'textures.h bounce.h grid.h particle.h scene.h bitmap.h'
+sources = 'bounce.cpp grid.cpp particle.cpp scene.cpp bitmap.c'
+
+Program('bounce', sources.split(), LIBS=['GL', 'glut'])
+
+sources = 'bmpview.c bitmap.c'
+Program('bmpview', sources.split(), LIBS=['GL', 'glut'])
