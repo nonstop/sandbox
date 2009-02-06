@@ -1,0 +1,6 @@
+
+sources='main.cpp local_logger.cpp'
+
+env = Environment()
+env.Program('log', source=sources.split())
+
