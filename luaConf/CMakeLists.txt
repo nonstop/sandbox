@@ -1,0 +1,7 @@
+SET(TARGET luaConf)
+LINK_LIBRARIES(lua)
+LINK_LIBRARIES(dl)
+
+SET(SOURCES main.cpp LocalLua.cpp)
+
+ADD_EXECUTABLE(${TARGET} ${SOURCES})
