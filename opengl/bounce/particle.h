@@ -1,54 +1,61 @@
 #ifndef PARTICLE_H
 #define PARTICLE_H
 
+#include <list>
+
 #include "bounce.h"
 #include "grid.h"
 
 #define TRACE_LEN 6
 
-enum TDirection { dIncX, dDecX, dIncY, dDecY, dIncZ, dDecZ };
+enum Direction { dIncX, dDecX, dIncY, dDecY, dIncZ, dDecZ };
 
 #define MAX_PARTICLE_STEPS 30.0
 
-class TParticle
+class Particle
 {
 private:
-	TGrid *nGrid;
+    const Grid& grid;
 
-	TVertex head_pos, tail_pos;					
-	TJuncs trace[TRACE_LEN];		// [1..TRACE_LEN-1] - траектория движения, 0 - пункт назначения
-	unsigned short steps;			// количество шагов, за которое частица достигает пункта назначения
-	unsigned short cur_step;		// на каком шаге в данный момент находится частица
-	unsigned short trace_len;
-	TDirection direction;
-	GLfloat angle_x, angle_y, angle_z;
+    Vertex head_pos, tail_pos;                    
+    Juncs trace[TRACE_LEN];        // [1..TRACE_LEN-1] - С‚СЂР°РµРєС‚РѕСЂРёСЏ РґРІРёР¶РµРЅРёСЏ, 0 - РїСѓРЅРєС‚ РЅР°Р·РЅР°С‡РµРЅРёСЏ
+    unsigned short steps;            // РєРѕР»РёС‡РµСЃС‚РІРѕ С€Р°РіРѕРІ, Р·Р° РєРѕС‚РѕСЂРѕРµ С‡Р°СЃС‚РёС†Р° РґРѕСЃС‚РёРіР°РµС‚ РїСѓРЅРєС‚Р° РЅР°Р·РЅР°С‡РµРЅРёСЏ
+    unsigned short cur_step;        // РЅР° РєР°РєРѕРј С€Р°РіРµ РІ РґР°РЅРЅС‹Р№ РјРѕРјРµРЅС‚ РЅР°С…РѕРґРёС‚СЃСЏ С‡Р°СЃС‚РёС†Р°
+    const unsigned short trace_len;
+    Direction direction;
+    GLfloat angle_x, angle_y, angle_z;
 
-	GLfloat red, green, blue;
+    GLfloat red, green, blue;
 
 public:
-	TParticle ( TGrid *grid );
-	~TParticle ();
+    Particle(const Grid& grid);
+    ~Particle();
 
-	TJuncs selectDest ();
+    Juncs selectDest();
 
-	void drawTail ();
-	void drawParticle ();
-	void setTrace ();
-	void update ();
-	TJuncs *getTrace ();
-	unsigned short getTraceLen ();
-	TVertex getHeadPos ();
-	TVertex getTailPos ();
+    void drawTail();
+    void drawParticle();
+    void setTrace();
+    void update();
+    Juncs *getTrace();
+    unsigned short getTraceLen();
+    Vertex getHeadPos();
+    Vertex getTailPos();
 
-	void getDirection ( TDirection *dir, TJuncs *jnc1, TJuncs *jnc2 );		// возвращает направление по двум точкам (типа 0,1 или last-1, last)
+    // РІРѕР·РІСЂР°С‰Р°РµС‚ РЅР°РїСЂР°РІР»РµРЅРёРµ РїРѕ РґРІСѓРј С‚РѕС‡РєР°Рј(С‚РёРїР° 0,1 РёР»Рё last-1, last)
+    void getDirection(Direction& dir, const Juncs& jnc1, const Juncs& jnc2);
 
-	void setAngles ( GLfloat ang_x, GLfloat ang_y, GLfloat ang_z );
+    void setAngles(GLfloat ang_x, GLfloat ang_y, GLfloat ang_z);
 
-	bool operator== (TParticle prt) const
-	{
-		return ((trace[0].x == prt.trace[0].x) && (trace[0].y == prt.trace[0].y) && (trace[0].z == prt.trace[0].z)) ? true : false;
-	}
+    bool operator==(const Particle& prt)const
+    {
+        return((trace[0].x == prt.trace[0].x)&&(trace[0].y == prt.trace[0].y)&&(trace[0].z == prt.trace[0].z))? true : false;
+    }
 };
+
+typedef std::list<Particle> Particles;
+typedef Particles::iterator ParticlesIt;
+typedef Particles::const_iterator ParticlesConstIt;
 
 #endif /* PARTICLE_H */
 

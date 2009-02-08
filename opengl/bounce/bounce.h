@@ -1,14 +1,14 @@
 #ifndef BOUNCE_H
 #define BOUNCE_H
 
-struct TVertex		// для хранения координат узлов сетки
+struct Vertex        // для хранения координат узлов сетки
 {
     GLfloat x;
     GLfloat y;
     GLfloat z;
 };
 
-struct TJuncs		// для хранения указателей на узлы сетки
+struct Juncs        // для хранения указателей на узлы сетки
 {
     unsigned short x;
     unsigned short y;

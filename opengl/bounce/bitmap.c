@@ -36,11 +36,11 @@ LoadDIBitmap(const char *filename, /* I - File to load */
     if (fread(&header, sizeof(BITMAPFILEHEADER), 1, fp) < 1)
         {
         /* Couldn't read the file header - return NULL... */
-	fclose(fp);
+    fclose(fp);
         return (NULL);
         }
 
-    if (header.bfType != 'MB')	/* Check for BM reversed... */
+    if (header.bfType != 'MB')    /* Check for BM reversed... */
         {
         /* Not a bitmap file - return NULL... */
         fclose(fp);
@@ -68,7 +68,7 @@ LoadDIBitmap(const char *filename, /* I - File to load */
     if ((bitsize = (*info)->bmiHeader.biSizeImage) == 0)
         bitsize = ((*info)->bmiHeader.biWidth *
                    (*info)->bmiHeader.biBitCount + 7) / 8 *
-  	           abs((*info)->bmiHeader.biHeight);
+                 abs((*info)->bmiHeader.biHeight);
 
     if ((bits = malloc(bitsize)) == NULL)
         {
@@ -102,7 +102,7 @@ LoadDIBitmap(const char *filename, /* I - File to load */
 int                                /* O - 0 = success, -1 = failure */
 SaveDIBitmap(const char *filename, /* I - File to load */
              BITMAPINFO *info,     /* I - Bitmap information */
-	     GLubyte    *bits)     /* I - Bitmap data */
+         GLubyte    *bits)     /* I - Bitmap data */
     {
     FILE             *fp;          /* Open file pointer */
     int              size,         /* Size of file */
@@ -117,32 +117,32 @@ SaveDIBitmap(const char *filename, /* I - File to load */
 
     /* Figure out the bitmap size */
     if (info->bmiHeader.biSizeImage == 0)
-	bitsize = (info->bmiHeader.biWidth *
-        	   info->bmiHeader.biBitCount + 7) / 8 *
-		  abs(info->bmiHeader.biHeight);
+    bitsize = (info->bmiHeader.biWidth *
+               info->bmiHeader.biBitCount + 7) / 8 *
+          abs(info->bmiHeader.biHeight);
     else
-	bitsize = info->bmiHeader.biSizeImage;
+    bitsize = info->bmiHeader.biSizeImage;
 
     /* Figure out the header size */
     infosize = sizeof(BITMAPINFOHEADER);
     switch (info->bmiHeader.biCompression)
-	{
-	case BI_BITFIELDS :
+    {
+    case BI_BITFIELDS :
             infosize += 12; /* Add 3 RGB doubleword masks */
             if (info->bmiHeader.biClrUsed == 0)
-	      break;
-	case BI_RGB :
+          break;
+    case BI_RGB :
             if (info->bmiHeader.biBitCount > 8 &&
-        	info->bmiHeader.biClrUsed == 0)
-	      break;
-	case BI_RLE8 :
-	case BI_RLE4 :
+            info->bmiHeader.biClrUsed == 0)
+          break;
+    case BI_RLE8 :
+    case BI_RLE4 :
             if (info->bmiHeader.biClrUsed == 0)
               infosize += (1 << info->bmiHeader.biBitCount) * 4;
-	    else
+        else
               infosize += info->bmiHeader.biClrUsed * 4;
-	    break;
-	}
+        break;
+    }
 
     size = sizeof(BITMAPFILEHEADER) + infosize + bitsize;
 
@@ -254,7 +254,7 @@ LoadDIBitmap(const char *filename, /* I - File to load */
     (*info)->bmiHeader.biClrImportant  = read_dword(fp);
 
     if (infosize > 40)
-	if (fread((*info)->bmiColors, infosize - 40, 1, fp) < 1)
+    if (fread((*info)->bmiColors, infosize - 40, 1, fp) < 1)
             {
             /* Couldn't read the bitmap header - return NULL... */
             free(*info);
@@ -267,7 +267,7 @@ LoadDIBitmap(const char *filename, /* I - File to load */
     if ((bitsize = (*info)->bmiHeader.biSizeImage) == 0)
         bitsize = ((*info)->bmiHeader.biWidth *
                    (*info)->bmiHeader.biBitCount + 7) / 8 *
-  	           abs((*info)->bmiHeader.biHeight);
+                 abs((*info)->bmiHeader.biHeight);
 
     if ((bits = malloc(bitsize)) == NULL)
         {
@@ -291,12 +291,12 @@ LoadDIBitmap(const char *filename, /* I - File to load */
     for (y = 0; y < (*info)->bmiHeader.biHeight; y ++)
         for (ptr = bits + y * length, x = (*info)->bmiHeader.biWidth;
              x > 0;
-	     x --, ptr += 3)
-	    {
-	    temp   = ptr[0];
-	    ptr[0] = ptr[2];
-	    ptr[2] = temp;
-	    }
+         x --, ptr += 3)
+        {
+        temp   = ptr[0];
+        ptr[0] = ptr[2];
+        ptr[2] = temp;
+        }
 
     /* OK, everything went fine - return the allocated bitmap... */
     fclose(fp);
@@ -313,7 +313,7 @@ LoadDIBitmap(const char *filename, /* I - File to load */
 int                                /* O - 0 = success, -1 = failure */
 SaveDIBitmap(const char *filename, /* I - File to load */
              BITMAPINFO *info,     /* I - Bitmap information */
-	     GLubyte    *bits)     /* I - Bitmap data */
+         GLubyte    *bits)     /* I - Bitmap data */
     {
     FILE *fp;                      /* Open file pointer */
     int  size,                     /* Size of file */
@@ -327,32 +327,32 @@ SaveDIBitmap(const char *filename, /* I - File to load */
 
     /* Figure out the bitmap size */
     if (info->bmiHeader.biSizeImage == 0)
-	bitsize = (info->bmiHeader.biWidth *
-        	   info->bmiHeader.biBitCount + 7) / 8 *
-		  abs(info->bmiHeader.biHeight);
+    bitsize = (info->bmiHeader.biWidth *
+               info->bmiHeader.biBitCount + 7) / 8 *
+          abs(info->bmiHeader.biHeight);
     else
-	bitsize = info->bmiHeader.biSizeImage;
+    bitsize = info->bmiHeader.biSizeImage;
 
     /* Figure out the header size */
     infosize = sizeof(BITMAPINFOHEADER);
     switch (info->bmiHeader.biCompression)
-	{
-	case BI_BITFIELDS :
+    {
+    case BI_BITFIELDS :
             infosize += 12; /* Add 3 RGB doubleword masks */
             if (info->bmiHeader.biClrUsed == 0)
-	      break;
-	case BI_RGB :
+          break;
+    case BI_RGB :
             if (info->bmiHeader.biBitCount > 8 &&
-        	info->bmiHeader.biClrUsed == 0)
-	      break;
-	case BI_RLE8 :
-	case BI_RLE4 :
+            info->bmiHeader.biClrUsed == 0)
+          break;
+    case BI_RLE8 :
+    case BI_RLE4 :
             if (info->bmiHeader.biClrUsed == 0)
               infosize += (1 << info->bmiHeader.biBitCount) * 4;
-	    else
+        else
               infosize += info->bmiHeader.biClrUsed * 4;
-	    break;
-	}
+        break;
+    }
 
     size = sizeof(BITMAPFILEHEADER) + infosize + bitsize;
 
@@ -376,7 +376,7 @@ SaveDIBitmap(const char *filename, /* I - File to load */
     write_dword(fp, info->bmiHeader.biClrImportant);
 
     if (infosize > 40)
-	if (fwrite(info->bmiColors, infosize - 40, 1, fp) < 1)
+    if (fwrite(info->bmiColors, infosize - 40, 1, fp) < 1)
             {
             /* Couldn't write the bitmap header - return... */
             fclose(fp);
