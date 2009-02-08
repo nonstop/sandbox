@@ -92,7 +92,7 @@ def consolePrinter(author, stats):
         total = str(total)
     else:
         total = '+' + str(total)
-    print '%s - %d: +%d -%d  =%s' % (author, stats.commits, stats.addedLines, stats.removedLines, total)
+    print '%s\t%d\t+%d\t-%d\t%s' % (author, stats.commits, stats.addedLines, stats.removedLines, total)
 
 def getDate(dateStr):
     return datetime.date(*strptime(dateStr, "%Y-%m-%d")[0:3])
