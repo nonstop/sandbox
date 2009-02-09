@@ -34,8 +34,6 @@ static bool checkParticlePos(const Particle& p, const Particles& particles)
 void Scene::init ()
 {
     loadTexture("particle.bmp", &texParticle);
-//    loadTexture("human_cursor.bmp", &texParticle);
-//    loadTexture("orc_cursor.bmp", &texParticle);
     loadTexture("background.bmp", &texBackground);
 
     grid.init(40.0, 10.0, 40.0);
@@ -55,14 +53,11 @@ void Scene::init ()
     
     glPushMatrix ();
 
-//    glColor4f(0.5f, 0.5f, 0.5f, 1.0);
-//    glColor4f(0.5f, 0.5f, 0.0f, 1.0);
     glBindTexture(GL_TEXTURE_2D, texParticle);
     glEnable(GL_TEXTURE_2D);
 
     glEnable(GL_BLEND);
 
-//    glScalef(2.5, 2.5, 2.5);
     glBegin(GL_QUADS);
     glTexCoord2f(0.0, 0.0); glVertex3f(-0.8f, -0.9f, 0);
     glTexCoord2f(1.0, 0.0); glVertex3f(+0.8f, -0.9f, 0);
