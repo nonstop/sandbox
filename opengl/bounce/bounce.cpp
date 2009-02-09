@@ -149,7 +149,7 @@ void run(int argc, char** argv)
 
     glutInitWindowSize(800, 800);
     glutCreateWindow("GLUT-based OpenGL skyfly");
-    glutFullScreen();
+//    glutFullScreen();
 
     init();
     glutDisplayFunc(display);

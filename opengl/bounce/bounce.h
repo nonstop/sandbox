@@ -1,19 +1,14 @@
 #ifndef BOUNCE_H
 #define BOUNCE_H
 
-struct Vertex        // для хранения координат узлов сетки
-{
-    GLfloat x;
-    GLfloat y;
-    GLfloat z;
-};
+// координаты узла сетки
+struct Vertex { GLfloat x, y, z; };
 
-struct Juncs        // для хранения указателей на узлы сетки
-{
-    unsigned short x;
-    unsigned short y;
-    unsigned short z;
-};
+// все узлы в относительных единицах
+struct Juncs { unsigned short x, y, z; };
+
+struct Color { GLfloat red, green, blue; };
+
 
 #endif /* BOUNCE_H */
 

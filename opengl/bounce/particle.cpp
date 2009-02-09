@@ -258,9 +258,9 @@ void Particle::drawParticle()
 
 }
 
+// рисование следа частицы
 void Particle::drawTail()
 {
-// рисование следа частицы
     glLineWidth(2);
 
     glBegin(GL_LINE_STRIP);
@@ -269,31 +269,24 @@ void Particle::drawTail()
 //    GLfloat fr_red        = 0.2 + 0.8*(2*(MAX_PARTICLE_STEPS-steps)/MAX_PARTICLE_STEPS);
 //    GLfloat fr_green    = 0.8f;
 //    GLfloat fr_blue        = 0.8f;
+    Color fromColor = {red, green, blue};
+    const Color toColor = {0.1f, 0.1f, 0.4f};
 
-    GLfloat fr_red        = red;
-    GLfloat fr_green    = green;
-    GLfloat fr_blue        = blue;
-
-    GLfloat to_red        = 0.1f;
-    GLfloat to_green    = 0.1f;
-    GLfloat to_blue        = 0.4f;
-
-
-    glColor3f(fr_red, fr_green, fr_blue);
+    glColor3fv(&fromColor.red);
     glVertex3fv(&head_pos.x);
 
-    for(int i=1; i<trace_len-1; i++)
-    {
-        fr_red   -=(cur_step +(i-1)*steps)*((fr_red - to_red)/(steps*trace_len));
-        fr_green -=(cur_step +(i-1)*steps)*((fr_green - to_green)/(steps*trace_len));;
-        fr_blue  -=(cur_step +(i-1)*steps)*((fr_blue - to_blue)/(steps*trace_len));;
+#define CHANGE_COLOR(x) fromColor.x -= \
+    (cur_step + (i - 1) * steps) * ((fromColor.x - toColor.x)/(steps * trace_len))
+    for (int i=1; i<trace_len-1; ++i) {
+        CHANGE_COLOR(red);
+        CHANGE_COLOR(green);
+        CHANGE_COLOR(blue);
 
-        glColor3f(fr_red, fr_green, fr_blue);
-
+        glColor3fv(&fromColor.red);
         glVertex3fv(&(grid.getCoords(trace[i]).x));
     }
 
-    glColor3f(to_red, to_green, to_blue);
+    glColor3fv(&toColor.red);
     glVertex3fv(&tail_pos.x);
 
     glEnd();
