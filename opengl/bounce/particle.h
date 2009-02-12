@@ -8,8 +8,6 @@
 
 #define TRACE_LEN 6
 
-enum Direction { dIncX, dDecX, dIncY, dDecY, dIncZ, dDecZ };
-
 #define MAX_PARTICLE_STEPS 30.0
 
 class Particle
@@ -22,7 +20,6 @@ private:
     unsigned short steps;            // количество шагов, за которое частица достигает пункта назначения
     unsigned short cur_step;        // на каком шаге в данный момент находится частица
     const unsigned short trace_len;
-    Direction direction;
     GLfloat angle_x, angle_y, angle_z;
 
     GLfloat red, green, blue;
@@ -41,9 +38,6 @@ public:
     unsigned short getTraceLen();
     Vertex getHeadPos();
     Vertex getTailPos();
-
-    // возвращает направление по двум точкам(типа 0,1 или last-1, last)
-    void getDirection(Direction& dir, const Juncs& jnc1, const Juncs& jnc2);
 
     void setAngles(GLfloat ang_x, GLfloat ang_y, GLfloat ang_z);
 
