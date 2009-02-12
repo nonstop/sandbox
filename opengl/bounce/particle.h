@@ -16,7 +16,7 @@ private:
     const Grid& grid;
 
     Vertex head_pos, tail_pos;                    
-    Juncs trace[TRACE_LEN];        // [1..TRACE_LEN-1] - траектория движения, 0 - пункт назначения
+    Junc trace[TRACE_LEN];        // [1..TRACE_LEN-1] - траектория движения, 0 - пункт назначения
     unsigned short steps;            // количество шагов, за которое частица достигает пункта назначения
     unsigned short cur_step;        // на каком шаге в данный момент находится частица
     const unsigned short trace_len;
@@ -28,13 +28,11 @@ public:
     Particle(const Grid& grid);
     ~Particle();
 
-    Juncs selectDest();
-
     void drawTail();
     void drawParticle();
     void setTrace();
     void update();
-    Juncs *getTrace();
+    Junc *getTrace();
     unsigned short getTraceLen();
     Vertex getHeadPos();
     Vertex getTailPos();

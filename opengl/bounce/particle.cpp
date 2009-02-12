@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "stdlib.h"
 #include "particle.h"
 
 Particle::Particle(const Grid& grid)
@@ -43,7 +42,7 @@ void Particle::setTrace()
     tail_pos = head_pos;
 }
 
-Juncs *Particle::getTrace()
+Junc *Particle::getTrace()
 {
     return trace;
 }
@@ -53,9 +52,9 @@ unsigned short Particle::getTraceLen()
     return trace_len;
 }
 
-Juncs Particle::selectDest()
+Junc Particle::selectDest()
 {
-    Juncs dest;
+    Junc dest;
 
     bool selected = false;
 
@@ -64,6 +63,8 @@ Juncs Particle::selectDest()
         dest = trace[0];
 
         int k = rand()% 6;
+        Juncs neighbors;
+        grid.getNeighbors(neighbors, dest);
 
         switch(k)
         {
@@ -130,10 +131,10 @@ void Particle::update()
 
     if(cur_step == steps)
     {
-        for(int i=trace_len-1; i>0; i--)
+        for(int i=trace_len-1; i>0; --i)
             trace[i]= trace[i-1];
 
-        trace[0] = selectDest();
+        trace[0] = grid.getNextDest(trace[0]);
     }
 
 
@@ -143,7 +144,7 @@ void Particle::update()
 
 enum Direction { dIncX, dDecX, dIncY, dDecY, dIncZ, dDecZ };
 // возвращает направление по двум точкам(типа 0,1 или last-1, last)
-static Direction getDirection(const Juncs& jnc1, const Juncs& jnc2)
+static Direction getDirection(const Junc& jnc1, const Junc& jnc2)
 {
     if(jnc1.x > jnc2.x) return dIncX;
     if(jnc1.x < jnc2.x) return dDecX;
