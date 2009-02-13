@@ -21,8 +21,7 @@ private:
     unsigned short cur_step;        // на каком шаге в данный момент находится частица
     const unsigned short trace_len;
     GLfloat angle_x, angle_y, angle_z;
-
-    GLfloat red, green, blue;
+    Color m_color;
 
 public:
     Particle(const Grid& grid);

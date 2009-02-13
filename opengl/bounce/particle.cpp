@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "particle.h"
 
 Particle::Particle(const Grid& grid)
@@ -9,9 +11,9 @@ Particle::Particle(const Grid& grid)
     angle_y = 0;
     angle_z = 0;
 
-    red     =(rand()% 255)/255.0;
-    green   =(rand()% 255)/255.0;
-    blue    =(rand()% 255)/255.0;
+    m_color.red = (rand() % 255)/255.0;
+    m_color.green = (rand() % 255)/255.0;
+    m_color.blue = (rand() % 255)/255.0;
 
 }
 
@@ -140,7 +142,7 @@ void Particle::drawParticle()
     glRotatef(45.0 + angle_y, 0.0, 1.0, 0.0);
     glRotatef(angle_z, 0.0, 0.0, 1.0);
 
-    glColor4f(red, green, blue, 1.0);
+    glColor4f(m_color.red, m_color.green, m_color.blue, 1.0);
     glEnable(GL_BLEND);
     glCallList(IL_PARTICLE);
     glDisable(GL_BLEND);
@@ -160,7 +162,7 @@ void Particle::drawTail()
 //    GLfloat fr_red        = 0.2 + 0.8*(2*(MAX_PARTICLE_STEPS-steps)/MAX_PARTICLE_STEPS);
 //    GLfloat fr_green    = 0.8f;
 //    GLfloat fr_blue        = 0.8f;
-    Color fromColor = {red, green, blue};
+    Color fromColor(m_color);
     const Color toColor = {0.1f, 0.1f, 0.4f};
 
     glColor3fv(&fromColor.red);
