@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <stdlib.h>
 #include "grid.h"
 
 Grid::Grid()
@@ -63,22 +64,74 @@ Junc Grid::getJuncs() const
     return nJuncs;
 }
 
-void Grid::getNeighbors(Juncs& neighbors, const Junc& junc) const
+Junc Grid::selectDest(const Junc& curJunc, const Junc& junc2) const
 {
-    neighbors.reserve(6);
-#define CHECK_COORD(c, upper_bound) if (junc.c < (upper_bound - 1)) { \
-        Junc j(junc); \
-        j.c += 1; \
-        neighbors.push_back(j); \
-    } \
-    { \
-        Junc j(junc); \
-        j.c -= 1; \
-        neighbors.push_back(j); \
-    }
-    CHECK_COORD(x, n_juncs_x);
-    CHECK_COORD(y, n_juncs_y);
-    CHECK_COORD(z, n_juncs_z);
+    Junc dest;
+
+    bool selected = false;
+
+    do
+    {
+        dest = curJunc;
+
+        int k = rand()% 6;
+
+        switch(k)
+        {
+        case 0:        // inc X
+            if((dest.x+1)<=(n_juncs_x-1))
+            {
+                selected = true;
+                dest.x += 1;
+            }
+            break;
+        case 1:        // dec X
+            if((dest.x-1)>= 0)
+            {
+                selected = true;
+                dest.x -= 1;
+            }
+            break;
+        case 2:        // inc Y
+            if((dest.y+1)<=(n_juncs_y-1))
+            {
+                selected = true;
+                dest.y += 1;
+            }
+            break;
+        case 3:        // dec Y
+            if((dest.y-1)>= 0)
+            {
+                selected = true;
+                dest.y -= 1;
+            }
+            break;
+        case 4:        // inc Z
+            if((dest.z+1)<=(n_juncs_z-1))
+            {
+                selected = true;
+                dest.z += 1;
+            }
+            break;
+        case 5:        // dec Z
+            if((dest.z-1)>= 0)
+            {
+                selected = true;
+                dest.z -= 1;
+            }
+            break;
+
+        }
+
+        if(dest.x == junc2.x)
+            if(dest.y == junc2.y)
+                if(dest.z == junc2.z)
+                    selected = false;
+
+    } while(!selected);
+
+
+    return dest;
 }
 
 Vertex Grid::getCoords(unsigned short i, unsigned short j, unsigned short k) const

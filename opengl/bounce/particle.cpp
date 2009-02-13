@@ -36,7 +36,8 @@ void Particle::setTrace()
     for(int i=1; i<trace_len; i++)
         trace[i] = trace[0];
 
-    trace[0] = selectDest();
+    trace[0] = grid.selectDest(trace[0], trace[2]);
+    cur_step = 0;
 
     head_pos = grid.getCoords(trace[1]);
     tail_pos = head_pos;
@@ -52,79 +53,6 @@ unsigned short Particle::getTraceLen()
     return trace_len;
 }
 
-Junc Particle::selectDest()
-{
-    Junc dest;
-
-    bool selected = false;
-
-    do
-    {
-        dest = trace[0];
-
-        int k = rand()% 6;
-        Juncs neighbors;
-        grid.getNeighbors(neighbors, dest);
-
-        switch(k)
-        {
-        case 0:        // inc X
-            if((dest.x+1)<=(grid.getJuncs().x-1))
-            {
-                selected = true;
-                dest.x += 1;
-            }
-            break;
-        case 1:        // dec X
-            if((dest.x-1)>= 0)
-            {
-                selected = true;
-                dest.x -= 1;
-            }
-            break;
-        case 2:        // inc Y
-            if((dest.y+1)<=(grid.getJuncs().y-1))
-            {
-                selected = true;
-                dest.y += 1;
-            }
-            break;
-        case 3:        // dec Y
-            if((dest.y-1)>= 0)
-            {
-                selected = true;
-                dest.y -= 1;
-            }
-            break;
-        case 4:        // inc Z
-            if((dest.z+1)<=(grid.getJuncs().z-1))
-            {
-                selected = true;
-                dest.z += 1;
-            }
-            break;
-        case 5:        // dec Z
-            if((dest.z-1)>= 0)
-            {
-                selected = true;
-                dest.z -= 1;
-            }
-            break;
-
-        }
-
-        if(dest.x == trace[2].x)
-            if(dest.y == trace[2].y)
-                if(dest.z == trace[2].z)
-                    selected = false;
-
-    } while(!selected);
-
-    cur_step = 0;
-
-    return dest;
-}
-
 void Particle::update()
 {    
     cur_step++;
@@ -134,7 +62,8 @@ void Particle::update()
         for(int i=trace_len-1; i>0; --i)
             trace[i]= trace[i-1];
 
-        trace[0] = grid.getNextDest(trace[0]);
+        trace[0] = grid.selectDest(trace[0], trace[2]);
+        cur_step = 0;
     }
 
 
