@@ -16,9 +16,10 @@ public:
     Grid();
     ~Grid();
 
-    Juncs getJuncs() const;
+    Junc getJuncs() const;
+    void getNeighbors(Juncs& neighbors, const Junc& junc) const;
     Vertex getCoords(unsigned short i, unsigned short j, unsigned short k) const;
-    Vertex getCoords(const Juncs& jnc) const;
+    Vertex getCoords(const Junc& jnc) const;
     void draw();
     void init(float len_x, float len_y, float len_z);
     void setImageList(GLuint ilID);

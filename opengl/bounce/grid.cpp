@@ -53,9 +53,9 @@ void Grid::draw()
     return;
 }
 
-Juncs Grid::getJuncs() const
+Junc Grid::getJuncs() const
 {
-    Juncs nJuncs = {
+    Junc nJuncs = {
         n_juncs_x,
         n_juncs_y,
         n_juncs_z};
@@ -63,12 +63,30 @@ Juncs Grid::getJuncs() const
     return nJuncs;
 }
 
+void Grid::getNeighbors(Juncs& neighbors, const Junc& junc) const
+{
+    neighbors.reserve(6);
+#define CHECK_COORD(c, upper_bound) if (junc.c < (upper_bound - 1)) { \
+        Junc j(junc); \
+        j.c += 1; \
+        neighbors.push_back(j); \
+    } \
+    { \
+        Junc j(junc); \
+        j.c -= 1; \
+        neighbors.push_back(j); \
+    }
+    CHECK_COORD(x, n_juncs_x);
+    CHECK_COORD(y, n_juncs_y);
+    CHECK_COORD(z, n_juncs_z);
+}
+
 Vertex Grid::getCoords(unsigned short i, unsigned short j, unsigned short k) const
 {
     return coords[i][j][k];
 }
 
-Vertex Grid::getCoords(const Juncs& jnc) const
+Vertex Grid::getCoords(const Junc& jnc) const
 {
     return coords[jnc.x][jnc.y][jnc.z];
 }

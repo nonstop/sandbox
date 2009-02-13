@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "stdlib.h"
 #include "particle.h"
 
 Particle::Particle(const Grid& grid)
@@ -11,8 +10,8 @@ Particle::Particle(const Grid& grid)
     angle_y = 0;
     angle_z = 0;
 
-    red        =(rand()% 255)/255.0;
-    green    =(rand()% 255)/255.0;
+    red     =(rand()% 255)/255.0;
+    green   =(rand()% 255)/255.0;
     blue    =(rand()% 255)/255.0;
 
 }
@@ -43,7 +42,7 @@ void Particle::setTrace()
     tail_pos = head_pos;
 }
 
-Juncs *Particle::getTrace()
+Junc *Particle::getTrace()
 {
     return trace;
 }
@@ -53,9 +52,9 @@ unsigned short Particle::getTraceLen()
     return trace_len;
 }
 
-Juncs Particle::selectDest()
+Junc Particle::selectDest()
 {
-    Juncs dest;
+    Junc dest;
 
     bool selected = false;
 
@@ -64,13 +63,14 @@ Juncs Particle::selectDest()
         dest = trace[0];
 
         int k = rand()% 6;
+        Juncs neighbors;
+        grid.getNeighbors(neighbors, dest);
 
         switch(k)
         {
         case 0:        // inc X
             if((dest.x+1)<=(grid.getJuncs().x-1))
             {
-                direction = dIncX;
                 selected = true;
                 dest.x += 1;
             }
@@ -78,7 +78,6 @@ Juncs Particle::selectDest()
         case 1:        // dec X
             if((dest.x-1)>= 0)
             {
-                direction = dDecX;
                 selected = true;
                 dest.x -= 1;
             }
@@ -86,7 +85,6 @@ Juncs Particle::selectDest()
         case 2:        // inc Y
             if((dest.y+1)<=(grid.getJuncs().y-1))
             {
-                direction = dIncY;
                 selected = true;
                 dest.y += 1;
             }
@@ -94,7 +92,6 @@ Juncs Particle::selectDest()
         case 3:        // dec Y
             if((dest.y-1)>= 0)
             {
-                direction = dDecY;
                 selected = true;
                 dest.y -= 1;
             }
@@ -102,7 +99,6 @@ Juncs Particle::selectDest()
         case 4:        // inc Z
             if((dest.z+1)<=(grid.getJuncs().z-1))
             {
-                direction = dIncZ;
                 selected = true;
                 dest.z += 1;
             }
@@ -110,7 +106,6 @@ Juncs Particle::selectDest()
         case 5:        // dec Z
             if((dest.z-1)>= 0)
             {
-                direction = dDecZ;
                 selected = true;
                 dest.z -= 1;
             }
@@ -136,10 +131,10 @@ void Particle::update()
 
     if(cur_step == steps)
     {
-        for(int i=trace_len-1; i>0; i--)
+        for(int i=trace_len-1; i>0; --i)
             trace[i]= trace[i-1];
 
-        trace[0] = selectDest();
+        trace[0] = grid.getNextDest(trace[0]);
     }
 
 
@@ -147,96 +142,64 @@ void Particle::update()
     tail_pos = getTailPos();
 }
 
-Vertex Particle::getHeadPos()
+enum Direction { dIncX, dDecX, dIncY, dDecY, dIncZ, dDecZ };
+// возвращает направление по двум точкам(типа 0,1 или last-1, last)
+static Direction getDirection(const Junc& jnc1, const Junc& jnc2)
 {
-    Vertex result = grid.getCoords(trace[1]);
-    float delta;
+    if(jnc1.x > jnc2.x) return dIncX;
+    if(jnc1.x < jnc2.x) return dDecX;
+    if(jnc1.y > jnc2.y) return dIncY;
+    if(jnc1.y < jnc2.y) return dDecY;
+    if(jnc1.z > jnc2.z) return dIncZ;
+    if(jnc1.z < jnc2.z) return dDecZ;
+}
 
-    switch(direction)
-    {
+#warning ugly function signature - do something
+static void computePosition(Vertex& pos, Direction dir, int cur_step, int steps, const Vertex& pos1, const Vertex& pos2)
+{
+    float delta = 0;
+    switch (dir) {
     case dIncX:
-        delta = grid.getCoords(trace[0]).x - grid.getCoords(trace[1]).x;
-        result.x = result.x + delta*cur_step/steps;
+        delta = pos1.x - pos2.x;
+        pos.x = pos.x + delta * cur_step/steps;
         break;
     case dDecX:
-        delta = grid.getCoords(trace[0]).x - grid.getCoords(trace[1]).x;
-        result.x = result.x + delta*cur_step/steps;
+        delta = pos1.x - pos2.x;
+        pos.x = pos.x + delta * cur_step/steps;
         break;
     case dIncY:
-        delta = grid.getCoords(trace[0]).y - grid.getCoords(trace[1]).y;
-        result.y = result.y + delta*cur_step/steps;
+        delta = pos1.y - pos2.y;
+        pos.y = pos.y + delta * cur_step/steps;
         break;
     case dDecY:
-        delta = grid.getCoords(trace[0]).y - grid.getCoords(trace[1]).y;
-        result.y = result.y + delta*cur_step/steps;
+        delta = pos1.y - pos2.y;
+        pos.y = pos.y + delta * cur_step/steps;
         break;
     case dIncZ:
-        delta = grid.getCoords(trace[0]).z - grid.getCoords(trace[1]).z;
-        result.z = result.z + delta*cur_step/steps;
+        delta = pos1.z - pos2.z;
+        pos.z = pos.z + delta * cur_step/steps;
         break;
     case dDecZ:
-        delta = grid.getCoords(trace[0]).z - grid.getCoords(trace[1]).z;
-        result.z = result.z + delta*cur_step/steps;
+        delta = pos1.z - pos2.z;
+        pos.z = pos.z + delta * cur_step/steps;
         break;
     }
 
-    return result;
 }
 
-void Particle::getDirection(Direction& dir, const Juncs& jnc1, const Juncs& jnc2)
+Vertex Particle::getHeadPos()
 {
-    if(jnc1.x > jnc2.x)
-        dir = dIncX;
-    if(jnc1.x < jnc2.x)
-        dir = dDecX;
-
-    if(jnc1.y > jnc2.y)
-        dir = dIncY;
-    if(jnc1.y < jnc2.y)
-        dir = dDecY;
-
-    if(jnc1.z > jnc2.z)
-        dir = dIncZ;
-    if(jnc1.z < jnc2.z)
-        dir = dDecZ;
+    Vertex result = grid.getCoords(trace[1]);
+    Direction dir = getDirection(trace[0], trace[1]);
+    computePosition(result, dir, cur_step, steps, grid.getCoords(trace[0]), grid.getCoords(trace[1]));
+    return result;
 }
 
 Vertex Particle::getTailPos()
 {
     Vertex result = grid.getCoords(trace[trace_len-1]);
-    float delta;
-
-    Direction dir;
-    getDirection(dir, trace[trace_len-2], trace[trace_len-1]);
-
-    switch(dir)
-    {
-    case dIncX:
-        delta = grid.getCoords(trace[trace_len-2]).x - grid.getCoords(trace[trace_len-1]).x;
-        result.x = result.x + delta*cur_step/steps;
-        break;
-    case dDecX:
-        delta = grid.getCoords(trace[trace_len-2]).x - grid.getCoords(trace[trace_len-1]).x;
-        result.x = result.x + delta*cur_step/steps;
-        break;
-    case dIncY:
-        delta = grid.getCoords(trace[trace_len-2]).y - grid.getCoords(trace[trace_len-1]).y;
-        result.y = result.y + delta*cur_step/steps;
-        break;
-    case dDecY:
-        delta = grid.getCoords(trace[trace_len-2]).y - grid.getCoords(trace[trace_len-1]).y;
-        result.y = result.y + delta*cur_step/steps;
-        break;
-    case dIncZ:
-        delta = grid.getCoords(trace[trace_len-2]).z - grid.getCoords(trace[trace_len-1]).z;
-        result.z = result.z + delta*cur_step/steps;
-        break;
-    case dDecZ:
-        delta = grid.getCoords(trace[trace_len-2]).z - grid.getCoords(trace[trace_len-1]).z;
-        result.z = result.z + delta*cur_step/steps;
-        break;
-    }
-
+    Direction dir = getDirection(trace[trace_len-2], trace[trace_len-1]);
+    computePosition(result, dir, cur_step, steps, grid.getCoords(trace[trace_len-2]), grid.getCoords(trace[trace_len-1]));
     return result;
 }
 
