@@ -1,10 +1,11 @@
 // bounce.cpp : Defines the entry point for the console application.
 //
 
+#include <GL/glut.h>
+
 #include <ctime>
 #include <math.h>
 
-#include "stdafx.h"
 #include "scene.h"
 
 

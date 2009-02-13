@@ -1,5 +1,6 @@
-#include "stdafx.h"
 #include <stdlib.h>
+#include <GL/glu.h>
+
 #include "grid.h"
 
 Grid::Grid()

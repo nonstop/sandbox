@@ -1,8 +1,5 @@
-#include "stdafx.h"
-
-#include "scene.h"
-
 #include "textures.h"
+#include "scene.h"
 
 Scene::Scene ()
 {
