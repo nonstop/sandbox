@@ -123,13 +123,6 @@ void keypress(unsigned char key, int x, int y)
 
 void timer(int value)
 {
-    GLfloat ang_x, ang_y, ang_z;
-    scene.getAngles(&ang_x, &ang_y, &ang_z);
-
-    ang_y =(ang_y+0.05 >= 360)? 0 :(ang_y+0.05);
-
-    scene.setAngles(ang_x, ang_y, ang_z);
-
     scene.update();
     glutPostRedisplay();
 

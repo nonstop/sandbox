@@ -55,73 +55,61 @@ void Grid::draw()
     return;
 }
 
-Junc Grid::getJuncs() const
+Junc Grid::generatePos() const
 {
-    Junc nJuncs = {
-        n_juncs_x,
-        n_juncs_y,
-        n_juncs_z};
-
-    return nJuncs;
+    Junc pos;
+    pos.x = rand() % n_juncs_x;
+    pos.y = rand() % n_juncs_y;
+    pos.z = rand() % n_juncs_z;
+    return pos;
 }
 
 Junc Grid::selectDest(const Junc& curJunc, const Junc& junc2) const
 {
     Junc dest;
-
     bool selected = false;
 
-    do
-    {
+    do {
         dest = curJunc;
+        int k = rand() % 6;
 
-        int k = rand()% 6;
-
-        switch(k)
-        {
+        switch (k) {
         case 0:        // inc X
-            if((dest.x+1)<=(n_juncs_x-1))
-            {
+            if ((dest.x + 1) <= (n_juncs_x - 1)) {
                 selected = true;
                 dest.x += 1;
             }
             break;
         case 1:        // dec X
-            if((dest.x-1)>= 0)
-            {
+            if ((dest.x - 1) >= 0) {
                 selected = true;
                 dest.x -= 1;
             }
             break;
         case 2:        // inc Y
-            if((dest.y+1)<=(n_juncs_y-1))
-            {
+            if ((dest.y + 1) <= (n_juncs_y - 1)) {
                 selected = true;
                 dest.y += 1;
             }
             break;
         case 3:        // dec Y
-            if((dest.y-1)>= 0)
-            {
+            if ((dest.y - 1) >= 0) {
                 selected = true;
                 dest.y -= 1;
             }
             break;
         case 4:        // inc Z
-            if((dest.z+1)<=(n_juncs_z-1))
-            {
+            if ((dest.z + 1) <= (n_juncs_z - 1)) {
                 selected = true;
                 dest.z += 1;
             }
             break;
         case 5:        // dec Z
-            if((dest.z-1)>= 0)
-            {
+            if ((dest.z - 1) >= 0) {
                 selected = true;
                 dest.z -= 1;
             }
             break;
-
         }
 
         if(dest.x == junc2.x)
@@ -131,16 +119,11 @@ Junc Grid::selectDest(const Junc& curJunc, const Junc& junc2) const
 
     } while(!selected);
 
-
     return dest;
-}
-
-Vertex Grid::getCoords(unsigned short i, unsigned short j, unsigned short k) const
-{
-    return coords[i][j][k];
 }
 
 Vertex Grid::getCoords(const Junc& jnc) const
 {
     return coords[jnc.x][jnc.y][jnc.z];
 }
+

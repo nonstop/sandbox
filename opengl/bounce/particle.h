@@ -14,12 +14,10 @@ public:
     Particle(const Grid& grid);
     ~Particle();
 
-    void drawTail();
-    void drawParticle();
     void setTrace();
     void update();
-    Junc *getTrace();
-    unsigned short getTraceLen();
+    void drawTail();
+    void drawParticle();
     Vertex getHeadPos();
     Vertex getTailPos();
 

@@ -2,12 +2,9 @@
 #include "scene.h"
 
 Scene::Scene ()
-{
-    nParticles = 150;
-    angle_x = 0;
-    angle_y = 0;
-    angle_z = 0;
-}
+    : nParticles(150), 
+    angle_x(0), angle_y(0), angle_z(0)
+{}
 
 Scene::~Scene ()
 {
@@ -16,6 +13,7 @@ Scene::~Scene ()
     if (glIsList(IL_PARTICLE) == GL_TRUE)
         glDeleteLists(IL_PARTICLE, 1);
 }
+
 
 // prevent from starting with the same coords, true - good position
 static bool checkParticlePos(const Particle& p, const Particles& particles)
@@ -27,9 +25,10 @@ static bool checkParticlePos(const Particle& p, const Particles& particles)
     return true;
 }
 
-
 void Scene::init ()
 {
+    GLuint texParticle, texBackground;
+
     loadTexture("particle.bmp", &texParticle);
     loadTexture("background.bmp", &texBackground);
 
@@ -98,22 +97,10 @@ void Scene::init ()
 
 void Scene::update()
 {
+    angle_y =(angle_y+0.05 >= 360)? 0 :(angle_y+0.05);
+
     for (ParticlesIt it = particles.begin(); it != particles.end(); ++it)
         it->update();
-}
-
-void Scene::setAngles(GLfloat ang_x, GLfloat ang_y, GLfloat ang_z)
-{
-    angle_x = ang_x;
-    angle_y = ang_y;
-    angle_z = ang_z;
-}
-
-void Scene::getAngles(GLfloat *ang_x, GLfloat *ang_y, GLfloat *ang_z)
-{
-    *ang_x = angle_x;
-    *ang_y = angle_y;
-    *ang_z = angle_z;
 }
 
 void Scene::draw()

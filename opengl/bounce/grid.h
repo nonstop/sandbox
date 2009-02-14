@@ -16,9 +16,8 @@ public:
     Grid();
     ~Grid();
     
+    Junc generatePos() const;
     Junc selectDest(const Junc& curJunc, const Junc& junc2) const;
-    Junc getJuncs() const;
-    Vertex getCoords(unsigned short i, unsigned short j, unsigned short k) const;
     Vertex getCoords(const Junc& jnc) const;
     void draw();
     void init(float len_x, float len_y, float len_z);
