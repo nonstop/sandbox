@@ -53,8 +53,6 @@ void Scene::init ()
     glBindTexture(GL_TEXTURE_2D, texParticle);
     glEnable(GL_TEXTURE_2D);
 
-    glEnable(GL_BLEND);
-
     glBegin(GL_QUADS);
     glTexCoord2f(0.0, 0.0); glVertex3f(-0.8f, -0.9f, 0);
     glTexCoord2f(1.0, 0.0); glVertex3f(+0.8f, -0.9f, 0);
@@ -62,7 +60,6 @@ void Scene::init ()
     glTexCoord2f(0.0, 1.0); glVertex3f(-0.8f, +0.9f, 0);
     glEnd();
 
-    glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
 
     glEndList();
@@ -134,13 +131,15 @@ void Scene::draw()
     GLint width;
     glGetIntegerv(GL_LINE_WIDTH, &width);
 
-    glLineWidth(2);    
+    glLineWidth(2);
 
+    glEnable(GL_BLEND);
     for (ParticlesIt it = particles.begin(); it != particles.end(); ++it) {
         it->setAngles(-angle_x, -angle_y, -angle_z);
         it->drawTail();
         it->drawParticle();
     }
+    glDisable(GL_BLEND);
 
     glLineWidth(width);
 

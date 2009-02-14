@@ -8,7 +8,7 @@
 
 #define TRACE_LEN 6
 
-#define MAX_PARTICLE_STEPS 30.0
+#define MAX_PARTICLE_STEPS 60.0
 
 class Particle
 {

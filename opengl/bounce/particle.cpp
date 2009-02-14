@@ -142,9 +142,7 @@ void Particle::drawParticle()
     glRotatef(angle_z, 0.0, 0.0, 1.0);
 
     glColor4f(m_color.red, m_color.green, m_color.blue, 1.0);
-    glEnable(GL_BLEND);
     glCallList(IL_PARTICLE);
-    glDisable(GL_BLEND);
 
     glPopMatrix();
 
@@ -153,32 +151,21 @@ void Particle::drawParticle()
 // рисование следа частицы
 void Particle::drawTail()
 {
-    glLineWidth(2);
-
     glBegin(GL_LINE_STRIP);
 
-// перелив цвета от головы  к хвосту
-//    GLfloat fr_red        = 0.2 + 0.8*(2*(MAX_PARTICLE_STEPS-steps)/MAX_PARTICLE_STEPS);
-//    GLfloat fr_green    = 0.8f;
-//    GLfloat fr_blue        = 0.8f;
-    Color fromColor(m_color);
-    const Color toColor = {0.1f, 0.1f, 0.4f};
-
-    glColor3fv(&fromColor.red);
+    glColor4f(m_color.red, m_color.green, m_color.blue, 1.0);
     glVertex3fv(&head_pos.x);
 
-#define CHANGE_COLOR(x) fromColor.x -= \
-    (cur_step + (i - 1) * steps) * ((fromColor.x - toColor.x)/(steps * trace_len))
+    GLfloat k = 1.0 / (steps * (trace_len - 1));
+    GLfloat alpha = 1.0 - cur_step * k;
     for (int i=1; i<trace_len-1; ++i) {
-        CHANGE_COLOR(red);
-        CHANGE_COLOR(green);
-        CHANGE_COLOR(blue);
+        alpha -= steps * k;
 
-        glColor3fv(&fromColor.red);
+        glColor4f(m_color.red, m_color.green, m_color.blue, alpha);
         glVertex3fv(&(grid.getCoords(trace[i]).x));
     }
 
-    glColor3fv(&toColor.red);
+    glColor4f(m_color.red, m_color.green, m_color.blue, 0.0);
     glVertex3fv(&tail_pos.x);
 
     glEnd();

@@ -98,7 +98,7 @@ void init()
     glShadeModel(GL_SMOOTH);                                // Enables Smooth Color Shading
     glClearDepth(1.0);                                    // Depth Buffer Setup
     glDepthFunc(GL_LESS);                                    // The Type Of Depth Test To Do
-    glBlendFunc(GL_ONE, GL_ONE);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);    // Realy Nice perspective calculations
     glEnable(GL_TEXTURE_2D);                                // Enable Texture Mapping
