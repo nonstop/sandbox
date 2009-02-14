@@ -1,6 +1,3 @@
-// bounce.cpp : Defines the entry point for the console application.
-//
-
 #include <GL/glut.h>
 
 #include <ctime>
@@ -69,8 +66,6 @@ void reshape(int w, int h)
 // Do the perspective calculations. Last value = max clipping depth
     gluPerspective(60.0, w/h, 1.0, 100.0);
 
-//    glOrtho(-20.0, 20.0, -20.0, 20.0, -20.0, 20.0);
-                        
     glMatrixMode(GL_MODELVIEW);            // Return to the modelview matrix
     glLoadIdentity();                        // Reset View
 
@@ -144,8 +139,6 @@ void timer(int value)
 void run(int argc, char** argv)
 {
     glutInit(&argc, argv);
-//    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
 
     glutInitWindowSize(800, 800);
@@ -154,7 +147,7 @@ void run(int argc, char** argv)
 
     init();
     glutDisplayFunc(display);
-    glutIdleFunc(idle);
+//    glutIdleFunc(idle);
     glutReshapeFunc(reshape);
     glutKeyboardFunc(keypress);
     glutSpecialFunc(special);

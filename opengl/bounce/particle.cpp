@@ -2,24 +2,34 @@
 
 #include "particle.h"
 
-Particle::Particle(const Grid& grid)
-    : grid(grid), trace_len(TRACE_LEN), cur_step(0)
+namespace
 {
-    steps = 10 +(rand()% int(MAX_PARTICLE_STEPS));
+unsigned short generateSteps()
+{
+    const int MAX_PARTICLE_STEPS = 60;
+    return 10 +(rand()% int(MAX_PARTICLE_STEPS));
+}
+Color generateColor()
+{
+    Color c = {
+        (rand() % 255)/255.0,
+        (rand() % 255)/255.0,
+        (rand() % 255)/255.0};
+    return c;
+}
+}
 
+Particle::Particle(const Grid& grid)
+    : grid(grid), steps(generateSteps()), trace_len(TRACE_LEN), m_color(generateColor()),
+    cur_step(0)
+{
     angle_x = 0;
     angle_y = 0;
     angle_z = 0;
-
-    m_color.red = (rand() % 255)/255.0;
-    m_color.green = (rand() % 255)/255.0;
-    m_color.blue = (rand() % 255)/255.0;
-
 }
 
 Particle::~Particle()
-{
-}
+{}
 
 void Particle::setAngles(GLfloat ang_x, GLfloat ang_y, GLfloat ang_z)
 {
@@ -30,9 +40,9 @@ void Particle::setAngles(GLfloat ang_x, GLfloat ang_y, GLfloat ang_z)
 
 void Particle::setTrace()
 {
-    trace[0].x = rand()% grid.getJuncs().x;
-    trace[0].y = rand()% grid.getJuncs().y;
-    trace[0].z = rand()% grid.getJuncs().z;
+    trace[0].x = rand() % grid.getJuncs().x;
+    trace[0].y = rand() % grid.getJuncs().y;
+    trace[0].z = rand() % grid.getJuncs().z;
 
     for(int i=1; i<trace_len; i++)
         trace[i] = trace[0];

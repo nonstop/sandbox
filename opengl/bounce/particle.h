@@ -8,21 +8,8 @@
 
 #define TRACE_LEN 6
 
-#define MAX_PARTICLE_STEPS 60.0
-
 class Particle
 {
-private:
-    const Grid& grid;
-
-    Vertex head_pos, tail_pos;                    
-    Junc trace[TRACE_LEN];        // [1..TRACE_LEN-1] - траектория движения, 0 - пункт назначения
-    unsigned short steps;            // количество шагов, за которое частица достигает пункта назначения
-    unsigned short cur_step;        // на каком шаге в данный момент находится частица
-    const unsigned short trace_len;
-    GLfloat angle_x, angle_y, angle_z;
-    Color m_color;
-
 public:
     Particle(const Grid& grid);
     ~Particle();
@@ -42,6 +29,15 @@ public:
     {
         return((trace[0].x == prt.trace[0].x)&&(trace[0].y == prt.trace[0].y)&&(trace[0].z == prt.trace[0].z))? true : false;
     }
+private:
+    const Grid& grid;
+    const unsigned short steps;     // количество шагов, за которое частица достигает пункта назначения
+    const unsigned short trace_len;
+    const Color m_color;
+    Vertex head_pos, tail_pos;
+    Junc trace[TRACE_LEN];          // [1..TRACE_LEN-1] - траектория движения, 0 - пункт назначения
+    unsigned short cur_step;        // на каком шаге в данный момент находится частица
+    GLfloat angle_x, angle_y, angle_z;
 };
 
 typedef std::list<Particle> Particles;
