@@ -3,7 +3,7 @@
 #include "particle.h"
 
 Particle::Particle(const Grid& grid)
-    : grid(grid), trace_len(TRACE_LEN)
+    : grid(grid), trace_len(TRACE_LEN), cur_step(0)
 {
     steps = 10 +(rand()% int(MAX_PARTICLE_STEPS));
 
@@ -38,7 +38,6 @@ void Particle::setTrace()
         trace[i] = trace[0];
 
     trace[0] = grid.selectDest(trace[0], trace[2]);
-    cur_step = 0;
 
     head_pos = grid.getCoords(trace[1]);
     tail_pos = head_pos;
