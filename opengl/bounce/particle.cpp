@@ -14,7 +14,8 @@ static Color generateColor()
     Color c = {
         (rand() % 255)/255.0,
         (rand() % 255)/255.0,
-        (rand() % 255)/255.0};
+        (rand() % 255)/255.0,
+        1.0};
     return c;
 }
 
@@ -35,11 +36,17 @@ static Direction getDirection(const Junc& jnc1, const Junc& jnc2)
 Particle::Particle(const Grid& grid)
     : grid(grid), steps(generateSteps()), trace_len(TRACE_LEN), m_color(generateColor()),
     cur_step(0), angle_x(0), angle_y(0), angle_z(0)
-{
-}
+{}
 
 Particle::~Particle()
 {}
+
+bool Particle::operator==(const Particle& prt) const
+{
+    return ((trace[0].x == prt.trace[0].x)
+            && (trace[0].y == prt.trace[0].y)
+            && (trace[0].z == prt.trace[0].z)) ? true : false;
+}
 
 void Particle::setTrace()
 {
@@ -115,35 +122,18 @@ void Particle::update()
     tail_pos = computePosition(trace[trace_len - 2], trace[trace_len - 1]);
 }
 
-void Particle::drawParticle()
+void Particle::draw()
 {
-// рисование самой частицы
-    glPushMatrix();
-    glTranslatef(head_pos.x, head_pos.y, head_pos.z);
-    glRotatef(angle_x, 1.0, 0.0, 0.0);
-    glRotatef(45.0 + angle_y, 0.0, 1.0, 0.0);
-    glRotatef(angle_z, 0.0, 0.0, 1.0);
-
-    glColor4f(m_color.red, m_color.green, m_color.blue, 1.0);
-    glCallList(IL_PARTICLE);
-
-    glPopMatrix();
-
-}
-
 // рисование следа частицы
-void Particle::drawTail()
-{
     glBegin(GL_LINE_STRIP);
 
-    glColor4f(m_color.red, m_color.green, m_color.blue, 1.0);
+    glColor4fv(&m_color.red);
     glVertex3fv(&head_pos.x);
 
     GLfloat k = 1.0 / (steps * (trace_len - 1));
     GLfloat alpha = 1.0 - cur_step * k;
     for (int i=1; i<trace_len-1; ++i) {
         alpha -= steps * k;
-
         glColor4f(m_color.red, m_color.green, m_color.blue, alpha);
         glVertex3fv(&(grid.getCoords(trace[i]).x));
     }
@@ -152,4 +142,16 @@ void Particle::drawTail()
     glVertex3fv(&tail_pos.x);
 
     glEnd();
+// рисование самой частицы
+    glPushMatrix();
+    glTranslatef(head_pos.x, head_pos.y, head_pos.z);
+    glRotatef(angle_x, 1.0, 0.0, 0.0);
+    glRotatef(45.0 + angle_y, 0.0, 1.0, 0.0);
+    glRotatef(angle_z, 0.0, 0.0, 1.0);
+
+    glColor4fv(&m_color.red);
+    glCallList(IL_PARTICLE);
+
+    glPopMatrix();
 }
+

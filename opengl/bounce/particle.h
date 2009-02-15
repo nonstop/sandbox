@@ -15,16 +15,11 @@ public:
     ~Particle();
 
     void setTrace();
-    void update();
-    void drawTail();
-    void drawParticle();
-
     void setAngles(GLfloat ang_x, GLfloat ang_y, GLfloat ang_z);
+    void update();
+    void draw();
 
-    bool operator==(const Particle& prt)const
-    {
-        return((trace[0].x == prt.trace[0].x)&&(trace[0].y == prt.trace[0].y)&&(trace[0].z == prt.trace[0].z))? true : false;
-    }
+    bool operator==(const Particle& prt) const;
 private:
     Vertex computePosition(const Junc& j1, const Junc& j2);
 

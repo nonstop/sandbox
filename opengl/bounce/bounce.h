@@ -3,9 +3,10 @@
 
 #include <GL/gl.h>
 
-#define IL_GRID			1
-#define IL_PARTICLE		2
-#define IL_BACKGROUND	3
+enum BounceImageLists {
+    IL_GRID = 1,
+    IL_PARTICLE,
+    IL_BACKGROUND};
 
 // координаты узла сетки
 struct Vertex { GLfloat x, y, z; };
@@ -13,7 +14,7 @@ struct Vertex { GLfloat x, y, z; };
 // все узлы в относительных единицах
 struct Junc { unsigned short x, y, z; };
 
-struct Color { GLfloat red, green, blue; };
+struct Color { GLfloat red, green, blue, alpha; };
 
 
 #endif /* BOUNCE_H */

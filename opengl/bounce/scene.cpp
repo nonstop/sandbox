@@ -123,8 +123,7 @@ void Scene::draw()
     glEnable(GL_BLEND);
     for (ParticlesIt it = particles.begin(); it != particles.end(); ++it) {
         it->setAngles(-angle_x, -angle_y, -angle_z);
-        it->drawTail();
-        it->drawParticle();
+        it->draw();
     }
     glDisable(GL_BLEND);
 
