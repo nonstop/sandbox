@@ -7,7 +7,7 @@ namespace
 static unsigned short generateSteps()
 {
     const int MAX_PARTICLE_STEPS = 60;
-    return 10 +(rand()% int(MAX_PARTICLE_STEPS));
+    return 10 + (rand() % MAX_PARTICLE_STEPS);
 }
 static Color generateColor()
 {

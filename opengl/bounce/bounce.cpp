@@ -73,19 +73,6 @@ void reshape(int w, int h)
 }
 
 
-void idle()
-{
-/*    GLfloat ang_x, ang_y, ang_z;
-    scene.getAngles(&ang_x, &ang_y, &ang_z);
-
-    ang_y =(ang_y+0.05 >= 360)? 0 :(ang_y+0.05);
-
-    scene.setAngles(ang_x, ang_y, ang_z);
-
-    scene.update();
-    glutPostRedisplay();*/
-}
-
 void init()
 {
     srand(time(NULL));
@@ -135,12 +122,11 @@ void run(int argc, char** argv)
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
 
     glutInitWindowSize(800, 800);
-    glutCreateWindow("GLUT-based OpenGL skyfly");
+    glutCreateWindow("All star game");
 //    glutFullScreen();
 
     init();
     glutDisplayFunc(display);
-//    glutIdleFunc(idle);
     glutReshapeFunc(reshape);
     glutKeyboardFunc(keypress);
     glutSpecialFunc(special);
