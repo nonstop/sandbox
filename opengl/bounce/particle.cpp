@@ -4,12 +4,12 @@
 
 namespace
 {
-unsigned short generateSteps()
+static unsigned short generateSteps()
 {
     const int MAX_PARTICLE_STEPS = 60;
     return 10 +(rand()% int(MAX_PARTICLE_STEPS));
 }
-Color generateColor()
+static Color generateColor()
 {
     Color c = {
         (rand() % 255)/255.0,
@@ -17,6 +17,19 @@ Color generateColor()
         (rand() % 255)/255.0};
     return c;
 }
+
+enum Direction { dIncX, dDecX, dIncY, dDecY, dIncZ, dDecZ };
+// возвращает направление по двум точкам(типа 0,1 или last-1, last)
+static Direction getDirection(const Junc& jnc1, const Junc& jnc2)
+{
+    if(jnc1.x > jnc2.x) return dIncX;
+    if(jnc1.x < jnc2.x) return dDecX;
+    if(jnc1.y > jnc2.y) return dIncY;
+    if(jnc1.y < jnc2.y) return dDecY;
+    if(jnc1.z > jnc2.z) return dIncZ;
+    if(jnc1.z < jnc2.z) return dDecZ;
+}
+
 }
 
 Particle::Particle(const Grid& grid)
@@ -48,39 +61,13 @@ void Particle::setAngles(GLfloat ang_x, GLfloat ang_y, GLfloat ang_z)
     angle_z = ang_z;
 }
 
-void Particle::update()
-{    
-    cur_step++;
-
-    if(cur_step == steps)
-    {
-        for(int i=trace_len-1; i>0; --i)
-            trace[i]= trace[i-1];
-
-        trace[0] = grid.selectDest(trace[0], trace[2]);
-        cur_step = 0;
-    }
-
-
-    head_pos = getHeadPos();
-    tail_pos = getTailPos();
-}
-
-enum Direction { dIncX, dDecX, dIncY, dDecY, dIncZ, dDecZ };
-// возвращает направление по двум точкам(типа 0,1 или last-1, last)
-static Direction getDirection(const Junc& jnc1, const Junc& jnc2)
+Vertex Particle::computePosition(const Junc& j1, const Junc& j2)
 {
-    if(jnc1.x > jnc2.x) return dIncX;
-    if(jnc1.x < jnc2.x) return dDecX;
-    if(jnc1.y > jnc2.y) return dIncY;
-    if(jnc1.y < jnc2.y) return dDecY;
-    if(jnc1.z > jnc2.z) return dIncZ;
-    if(jnc1.z < jnc2.z) return dDecZ;
-}
+    Vertex pos = grid.getCoords(j2);
+    const Vertex pos1 = grid.getCoords(j1);
+    const Vertex pos2 = grid.getCoords(j2);
+    Direction dir = getDirection(j1, j2);
 
-#warning ugly function signature - do something
-static void computePosition(Vertex& pos, Direction dir, int cur_step, int steps, const Vertex& pos1, const Vertex& pos2)
-{
     float delta = 0;
     switch (dir) {
     case dIncX:
@@ -109,22 +96,23 @@ static void computePosition(Vertex& pos, Direction dir, int cur_step, int steps,
         break;
     }
 
+    return pos;
 }
 
-Vertex Particle::getHeadPos()
+void Particle::update()
 {
-    Vertex result = grid.getCoords(trace[1]);
-    Direction dir = getDirection(trace[0], trace[1]);
-    computePosition(result, dir, cur_step, steps, grid.getCoords(trace[0]), grid.getCoords(trace[1]));
-    return result;
-}
+    cur_step++;
 
-Vertex Particle::getTailPos()
-{
-    Vertex result = grid.getCoords(trace[trace_len-1]);
-    Direction dir = getDirection(trace[trace_len-2], trace[trace_len-1]);
-    computePosition(result, dir, cur_step, steps, grid.getCoords(trace[trace_len-2]), grid.getCoords(trace[trace_len-1]));
-    return result;
+    if (cur_step == steps) {
+        for (int i=trace_len-1; i>0; --i)
+            trace[i]= trace[i-1];
+
+        trace[0] = grid.selectDest(trace[0], trace[2]);
+        cur_step = 0;
+    }
+
+    head_pos = computePosition(trace[0], trace[1]);
+    tail_pos = computePosition(trace[trace_len - 2], trace[trace_len - 1]);
 }
 
 void Particle::drawParticle()
