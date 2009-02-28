@@ -1,0 +1,5 @@
+headers = 'Apple.h  Field.h  Globals.h  Grid.h  Scene.h  SnakeClass.h  SnakeUnit.h  StdAfx.h  Textures.h bitmap.h'
+sources = 'Apple.cpp  Field.cpp  Grid.cpp  Scene.cpp  Snake.cpp  SnakeClass.cpp  SnakeUnit.cpp  Textures.cpp bitmap.c'
+
+Program('snake', sources.split(), LIBS=['GL', 'glut'])
+
