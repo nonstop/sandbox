@@ -52,7 +52,7 @@ void Particle::setTrace()
 {
     trace[0] = grid.generatePos();
 
-    for(int i=1; i<trace_len; i++)
+    for (int i=1; i<trace_len; ++i)
         trace[i] = trace[0];
 
     trace[0] = grid.selectDest(trace[0], trace[2]);

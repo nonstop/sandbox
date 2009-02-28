@@ -1,12 +1,12 @@
 #include "textures.h"
 #include "scene.h"
 
-Scene::Scene ()
+Scene::Scene()
     : nParticles(150), 
     angle_x(0), angle_y(0), angle_z(0)
 {}
 
-Scene::~Scene ()
+Scene::~Scene()
 {
     if (glIsList(IL_GRID) == GL_TRUE)
         glDeleteLists(IL_GRID, 1);
@@ -25,7 +25,7 @@ static bool checkParticlePos(const Particle& p, const Particles& particles)
     return true;
 }
 
-void Scene::init ()
+void Scene::init()
 {
     GLuint texParticle, texBackground;
 
@@ -34,9 +34,8 @@ void Scene::init ()
 
     grid.init(40.0, 10.0, 40.0);
 
-    for (int i=0; i<nParticles; i++) {
+    for (int i=0; i<nParticles; ++i) {
         Particle ptcl(grid);
-
         do {
             ptcl.setTrace();
         } while (!checkParticlePos(ptcl, particles));
