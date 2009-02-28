@@ -1,0 +1,5 @@
+headers = 'Eyes.h  Resource.h  stdafx.h'
+sources = 'Eyes.cpp'
+
+Program('eyes', sources.split(), LIBS=['GL', 'glut'])
+
