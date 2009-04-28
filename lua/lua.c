@@ -4,7 +4,7 @@
 
 struct lua_State* L = NULL;
 
-void report_lua_error(const char* file, int line, int status)
+static void report_lua_error(const char* file, int line, int status)
 {
     if (status == 0)
         return;
@@ -12,25 +12,27 @@ void report_lua_error(const char* file, int line, int status)
     lua_pop(L, 1);
 }
 
-int foo(lua_State* L)
+static int foo__index(lua_State* L)
 {
+    size_t len;
+    const char *buf = luaL_checklstring(L, 2, &len);
+    fprintf(stderr, "args=%s len=%d\n", buf, len);
+
+    fprintf(stderr, "argc=%d ", lua_gettop(L));
+    fprintf(stderr, "argv[1]=%s ", lua_tostring(L, 1));
+    fprintf(stderr, "argv[2]=%s\n", lua_tostring(L, 2));
     lua_pushnumber(L, 2);
     return 1;
 }
 
-void prepare_table()
+static void prepare_table()
 {
-    lua_newtable(L); /* my empty environment aka {}              (sp += 1) */
-    
-    lua_newtable(L); // bar
-    
-    lua_newtable(L); // bar.__metatable
-    lua_pushcfunction(L, foo);
+    lua_newtable(L);
+    luaL_newmetatable(L, "bar_meta");
+    lua_pushcfunction(L, foo__index);
     lua_setfield(L, -2, "__index");
-
-    lua_setfield(L, -2, "bar");
-
-    lua_setfenv(L, -2); /* on the stack should be a modified env (sp -= 1) */
+    lua_setmetatable(L, -2);
+    lua_setfield(L, LUA_GLOBALSINDEX, "bar"); // table bar
 }
 
 int main(int ac, char* av[])

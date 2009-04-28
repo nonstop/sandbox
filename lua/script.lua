@@ -2,6 +2,8 @@
 print('hello')
 
 
-print(bar[0])
+print(bar)
+print(bar[5])
+print(bar.la)
 print(bar2)
 
