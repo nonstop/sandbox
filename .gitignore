@@ -3,3 +3,15 @@ tags
 CMakeCache.txt
 CMakeFiles
 .sconsign.dblite
+opengl/bounce/bmpview
+opengl/bounce/bounce
+qt/qcalendar/Makefile
+qt/qcalendar/qcalendar
+opengl/bounce/bmpview
+lua/testLua
+cpp/defines/main
+cpp/boost/a
+X11/switcher/switcher
+X11/switcher/cmake_install.cmake
+X11/switcher/Makefile
+X11/simple/simpleWindow
