@@ -1,0 +1,5 @@
+headers = 'Clocks.h  Minute.h  Resource.h  Scene.h  Sphere.h  stdafx.h'
+sources = 'Clocks.cpp  Minute.cpp  Scene.cpp  Sphere.cpp  stdafx.cpp'
+
+Program('clocks', sources.split(), LIBS=['GL', 'glut'])
+

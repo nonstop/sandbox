@@ -1,10 +1,8 @@
-// bounce.cpp : Defines the entry point for the console application.
-//
+#include <GL/glut.h>
 
 #include <ctime>
 #include <math.h>
 
-#include "stdafx.h"
 #include "scene.h"
 
 
@@ -68,27 +66,12 @@ void reshape(int w, int h)
 // Do the perspective calculations. Last value = max clipping depth
     gluPerspective(60.0, w/h, 1.0, 100.0);
 
-//    glOrtho(-20.0, 20.0, -20.0, 20.0, -20.0, 20.0);
-                        
     glMatrixMode(GL_MODELVIEW);            // Return to the modelview matrix
     glLoadIdentity();                        // Reset View
 
     glutPostRedisplay();
 }
 
-
-void idle()
-{
-/*    GLfloat ang_x, ang_y, ang_z;
-    scene.getAngles(&ang_x, &ang_y, &ang_z);
-
-    ang_y =(ang_y+0.05 >= 360)? 0 :(ang_y+0.05);
-
-    scene.setAngles(ang_x, ang_y, ang_z);
-
-    scene.update();
-    glutPostRedisplay();*/
-}
 
 void init()
 {
@@ -97,7 +80,7 @@ void init()
     glShadeModel(GL_SMOOTH);                                // Enables Smooth Color Shading
     glClearDepth(1.0);                                    // Depth Buffer Setup
     glDepthFunc(GL_LESS);                                    // The Type Of Depth Test To Do
-    glBlendFunc(GL_ONE, GL_ONE);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);    // Realy Nice perspective calculations
     glEnable(GL_TEXTURE_2D);                                // Enable Texture Mapping
@@ -127,13 +110,6 @@ void keypress(unsigned char key, int x, int y)
 
 void timer(int value)
 {
-    GLfloat ang_x, ang_y, ang_z;
-    scene.getAngles(&ang_x, &ang_y, &ang_z);
-
-    ang_y =(ang_y+0.05 >= 360)? 0 :(ang_y+0.05);
-
-    scene.setAngles(ang_x, ang_y, ang_z);
-
     scene.update();
     glutPostRedisplay();
 
@@ -143,17 +119,14 @@ void timer(int value)
 void run(int argc, char** argv)
 {
     glutInit(&argc, argv);
-//    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
 
     glutInitWindowSize(800, 800);
-    glutCreateWindow("GLUT-based OpenGL skyfly");
+    glutCreateWindow("All star game");
 //    glutFullScreen();
 
     init();
     glutDisplayFunc(display);
-    glutIdleFunc(idle);
     glutReshapeFunc(reshape);
     glutKeyboardFunc(keypress);
     glutSpecialFunc(special);
