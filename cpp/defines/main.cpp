@@ -1,13 +1,23 @@
 #include <unistd.h>
 #include <time.h>
-/*
+
+#if 1
+
 #include <stdio.h>
 
 #define OWNER "NONSTOP"
 
 #define STDFMT "%d %s %d %s:%d "
 #define STD getpid(), OWNER, time(NULL), __FILE__, __LINE__
-#define debug(format, ...) fprintf(stderr, STDFMT # format, STD, ## __VA_ARGS__); fprintf(stderr, "\n")
+
+bool enableDebug()
+{ return false; }
+
+#define debug(format, ...) { \
+    if (enableDebug()) { \
+         fprintf(stderr, STDFMT # format, STD, ## __VA_ARGS__); fprintf(stderr, "\n");\
+    } \
+}
 
 int main(int ac, char *av[])
 {
@@ -16,7 +26,8 @@ int main(int ac, char *av[])
     debug("%dnd %s", 2, "string");
     return 0;
 }
-*/
+
+#else
 
 #include <iostream>
 #include <boost/format.hpp>
@@ -35,4 +46,5 @@ int main(int ac, char *av[])
     debug("%snd %s", 2 % "string");
     return 0;
 }
+#endif
 
