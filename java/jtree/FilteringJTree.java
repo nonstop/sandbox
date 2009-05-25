@@ -1,48 +1,3 @@
-/*
- * Copyright (c) 1995 - 2008 Sun Microsystems, Inc.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- *   - Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *
- *   - Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *
- *   - Neither the name of Sun Microsystems nor the names of its
- *     contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
- * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
-
-//package components;
-
-/**
- * This application that requires the following additional files:
- *   FilteringJTreeHelp.html
- *    arnold.html
- *    bloch.html
- *    chan.html
- *    jls.html
- *    swingtutorial.html
- *    tutorial.html
- *    tutorialcont.html
- *    vm.html
- */
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -61,12 +16,10 @@ import java.io.IOException;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 
-public class FilteringJTree extends JPanel
-                      implements TreeSelectionListener {
+public class FilteringJTree extends JPanel {
     private JEditorPane htmlPane;
     private JTree tree;
     private URL helpURL;
-    private static boolean DEBUG = false;
 
     //Optionally play with line styles.  Possible values are
     //"Angled" (the default), "Horizontal", and "None".
@@ -89,9 +42,6 @@ public class FilteringJTree extends JPanel
         tree.getSelectionModel().setSelectionMode
                 (TreeSelectionModel.SINGLE_TREE_SELECTION);
 
-        //Listen for when the selection changes.
-        tree.addTreeSelectionListener(this);
-
         if (playWithLineStyle) {
             System.out.println("line style = " + lineStyle);
             tree.putClientProperty("JTree.lineStyle", lineStyle);
@@ -100,149 +50,50 @@ public class FilteringJTree extends JPanel
         //Create the scroll pane and add the tree to it. 
         JScrollPane treeView = new JScrollPane(tree);
 
-        //Create the HTML viewing pane.
-        htmlPane = new JEditorPane();
-        htmlPane.setEditable(false);
-        initHelp();
-        JScrollPane htmlView = new JScrollPane(htmlPane);
-
         //Add the scroll panes to a split pane.
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.setTopComponent(treeView);
-        splitPane.setBottomComponent(htmlView);
 
         Dimension minimumSize = new Dimension(100, 50);
-        htmlView.setMinimumSize(minimumSize);
         treeView.setMinimumSize(minimumSize);
-        splitPane.setDividerLocation(100); 
         splitPane.setPreferredSize(new Dimension(500, 300));
 
         //Add the split pane to this panel.
         add(splitPane);
     }
 
-    /** Required by TreeSelectionListener interface. */
-    public void valueChanged(TreeSelectionEvent e) {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-                           tree.getLastSelectedPathComponent();
-
-        if (node == null) return;
-
-        Object nodeInfo = node.getUserObject();
-        if (node.isLeaf()) {
-            BookInfo book = (BookInfo)nodeInfo;
-            displayURL(book.bookURL);
-            if (DEBUG) {
-                System.out.print(book.bookURL + ":  \n    ");
-            }
-        } else {
-            displayURL(helpURL); 
-        }
-        if (DEBUG) {
-            System.out.println(nodeInfo.toString());
-        }
-    }
-
-    private class BookInfo {
-        public String bookName;
-        public URL bookURL;
-
-        public BookInfo(String book, String filename) {
-            bookName = book;
-            bookURL = getClass().getResource(filename);
-            if (bookURL == null) {
-                System.err.println("Couldn't find file: "
-                                   + filename);
-            }
-        }
-
-        public String toString() {
-            return bookName;
-        }
-    }
-
-    private void initHelp() {
-        String s = "FilteringJTreeHelp.html";
-        helpURL = getClass().getResource(s);
-        if (helpURL == null) {
-            System.err.println("Couldn't open help file: " + s);
-        } else if (DEBUG) {
-            System.out.println("Help URL is " + helpURL);
-        }
-
-        displayURL(helpURL);
-    }
-
-    private void displayURL(URL url) {
-        try {
-            if (url != null) {
-                htmlPane.setPage(url);
-            } else { //null url
-		htmlPane.setText("File Not Found");
-                if (DEBUG) {
-                    System.out.println("Attempted to display a null URL.");
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Attempted to read a bad URL: " + url);
-        }
-    }
-
     private void createNodes(DefaultMutableTreeNode top) {
         DefaultMutableTreeNode category = null;
         DefaultMutableTreeNode book = null;
 
-        category = new DefaultMutableTreeNode("Books for Java Programmers");
+        category = new DefaultMutableTreeNode("aaa cat");
         top.add(category);
 
-        //original Tutorial
-        book = new DefaultMutableTreeNode(new BookInfo
-            ("The Java Tutorial: A Short Course on the Basics",
-            "tutorial.html"));
+        book = new DefaultMutableTreeNode("aaa-001");
         category.add(book);
 
-        //Tutorial Continued
-        book = new DefaultMutableTreeNode(new BookInfo
-            ("The Java Tutorial Continued: The Rest of the JDK",
-            "tutorialcont.html"));
+        book = new DefaultMutableTreeNode("bbb-002");
         category.add(book);
 
-        //JFC Swing Tutorial
-        book = new DefaultMutableTreeNode(new BookInfo
-            ("The JFC Swing Tutorial: A Guide to Constructing GUIs",
-            "swingtutorial.html"));
+        book = new DefaultMutableTreeNode("ccc-003");
         category.add(book);
 
-        //Bloch
-        book = new DefaultMutableTreeNode(new BookInfo
-            ("Effective Java Programming Language Guide",
-	     "bloch.html"));
+        book = new DefaultMutableTreeNode("ddd-004");
         category.add(book);
 
-        //Arnold/Gosling
-        book = new DefaultMutableTreeNode(new BookInfo
-            ("The Java Programming Language", "arnold.html"));
+        book = new DefaultMutableTreeNode("eee-005");
         category.add(book);
 
-        //Chan
-        book = new DefaultMutableTreeNode(new BookInfo
-            ("The Java Developers Almanac",
-             "chan.html"));
+        book = new DefaultMutableTreeNode("fff-006");
         category.add(book);
 
-        category = new DefaultMutableTreeNode("Books for Java Implementers");
+        category = new DefaultMutableTreeNode("bbb cat");
         top.add(category);
 
-        //VM
-        book = new DefaultMutableTreeNode(new BookInfo
-            ("The Java Virtual Machine Specification",
-             "vm.html"));
+        book = new DefaultMutableTreeNode("abc-1");
         category.add(book);
 
-        //Language Spec
-        book = new DefaultMutableTreeNode(new BookInfo
-            ("The Java Language Specification",
-             "jls.html"));
+        book = new DefaultMutableTreeNode("abc-2");
         category.add(book);
     }
         
