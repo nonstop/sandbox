@@ -1,10 +1,16 @@
-PHONY: all clean run
+JFLAGS = -g
+JC = javac
+.SUFFIXES: .java .class
+.java.class: clean
+	$(JC) $(JFLAGS) $*.java
 
-all: clean
-	/opt/java/bin/javac FilteringJTree.java
+CLASSES = FilteringJTree.java \
+        TreeDemo.java
+
+default: classes
+
+classes: $(CLASSES:.java=.class)
 
 clean:
-	rm -f *.class
+	$(RM) *.class
 
-run:
-	/opt/java/bin/java FilteringJTree
