@@ -5,7 +5,8 @@ JC = javac
 	$(JC) $(JFLAGS) $*.java
 
 CLASSES = FilteringJTree.java \
-        TreeDemo.java
+		  Typematic.java \
+          TreeDemo.java
 
 default: classes
 
