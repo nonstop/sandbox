@@ -61,7 +61,7 @@ struct TextFileReaderTraits
 {
     typedef std::string value_type;
     TextFileReaderTraits()
-        : file_("generator.cc", std::ifstream::in | std::ifstream::binary)
+        : file_("generator.cc")
     {
         DEBUG(__FUNCTION__);
         yield();
