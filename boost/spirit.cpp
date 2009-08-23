@@ -2,8 +2,8 @@
 #include <sstream>
 #include <string>
 
+#include <boost/bind.hpp>
 #include <boost/spirit.hpp>
-#include <boost/spirit/include/classic_grammar_def.hpp>
 
 using namespace std;
 using namespace boost::spirit;
@@ -48,12 +48,17 @@ struct foo_grammar : public grammar<foo_grammar> {
             record_list = record >> *(ch_p(',') >> record);
             record = str_p("Foo {")
                 >> int_p >> *(ch_p(';'))
-                >> string_literal >> ch_p('}');
+                >> string_literal[boost::bind(&foo_grammar::do_f2, &self, _1, _2)] >> ch_p('}');
         }
 		rule<ScannerT> const& start() {
             return record_list;
         }
     };
+    void do_f2(const char* beg, const char* end) const {
+        cout << "do_f2 beg=" << *beg << " end=" << *end << endl;
+        string str(beg, end - beg);
+        cout << "str=" << str << endl;
+    }
 };
 
 int main() {
