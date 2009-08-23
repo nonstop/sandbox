@@ -46,7 +46,8 @@ public:
     };
     iterator begin() {
         DEBUG(__FUNCTION__);
-        return iterator(traits_);
+        iterator it(traits_);
+        return (++it);
     }
     iterator end() {
         DEBUG(__FUNCTION__);
@@ -64,7 +65,6 @@ struct TextFileReaderTraits
         : file_("generator.cc")
     {
         DEBUG(__FUNCTION__);
-        yield();
     }
     value_type yield()
     {
