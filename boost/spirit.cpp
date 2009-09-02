@@ -30,7 +30,6 @@ Stream& operator<<(Stream& str, const Foo& f) {
 struct foo_grammar : public grammar<foo_grammar> {
     template<typename ScannerT>
     struct definition {
-        rule<ScannerT> identifier;
         rule<ScannerT> integer_literal;
         rule<ScannerT> string_literal;
         rule<ScannerT> record_list;
