@@ -1,0 +1,31 @@
+{
+    "objects": [
+        {
+            "m_num": 1,
+            "m_str": "Object One",
+            "m_arr": [1, 2, 3],
+            "m_log": true,
+            "m_obj": null 
+        },
+        {
+            "m_num": 2,
+            "m_str": "Object Two",
+            "m_arr": [],
+            "m_log": false,
+            "m_obj": null 
+        },
+        {
+            "m_num": 3,
+            "m_str": "Object Three",
+            "m_arr": [3],
+            "m_log": true,
+            "m_obj": {
+                "m_num": 4,
+                "m_str": "Object Four",
+                "m_arr": [4, 5],
+                "m_log": true,
+                "m_obj": null 
+            } 
+        } 
+    ]
+}
