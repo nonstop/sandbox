@@ -77,10 +77,7 @@ struct foo_grammar : public grammar<foo_grammar> {
             object = str_p("{") >> (key_value % ch_p(',')) >> str_p("}")
                 [boost::bind(&foo_grammar::do_object, &self, _1, _2)];
 
-            object_list = str_p("{") >> string_literal >> str_p(":") >> str_p("[")
-                >> (object % ch_p(','))
-                >> str_p("]") >> ch_p('}');
-            //object_list = str_p("{") >> key_value >> str_p("}") >> end_p;
+            object_list = str_p("{") >> key_value >> str_p("}") >> end_p;
         }
         rule<ScannerT> const& start() {
             return object_list;
@@ -111,7 +108,7 @@ int main() {
         }
     }
     objsStr.resize(objsStr.size() - 1);
-    cout << size_t(objsStr[objsStr.size() - 1]) << endl;
+    cout << "<" << objsStr << ">" << endl;
 
     Objects objs;
     foo_grammar g(objs);
