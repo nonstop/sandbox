@@ -4,9 +4,6 @@ import sys
 import string
 import re
 
-testStrings = ['1 file1', '2\tfile2', '3\tfile 3', '2 file 4', '4 file 5']
-testSize = 4
-
 class BadRecord(Exception):
     def __init__(self, value):
         self.value = 'BadRecord: ' + value
@@ -21,8 +18,10 @@ class Record(object):
         self.size = int(m.group(1))
         self.str = m.group(2)
     def __str__(self):
-        #return "%i %s" % (self.size, self.str)
-        return "%s" % (self.str)
+        if string.find(self.str, ' ') == -1:
+            return "%s" % (self.str)
+        else:
+            return "\"%s\"" % (self.str)
 
 def record_compare(lv, rv):
     if lv.size < rv.size:
@@ -40,7 +39,7 @@ class RecordStorage(object):
         recStr = ''
         for rec in self.records:
             recStr += " " + str(rec)
-        return "size: %d recs: %s" % (self.size, recStr)
+        return "size: %d recs:\n%s" % (self.size, recStr[1:])
 
 def apportion(records, maxSize):
     records.sort(record_compare)
@@ -61,14 +60,20 @@ def apportion(records, maxSize):
             n += 1
     return resultRecs
 
-def main(args = sys.argv):
+def usage():
+    print("portion.py size < file")
+
+def main(argv = sys.argv):
     recs = []
-    maxSize = 4500000 # kb in DVD
+    if len(argv) != 2:
+        usage()
+        return 1
+    maxSize = int(argv[1])
     for str in sys.stdin:
         recs.append(Record(str[:-1]))
     resultRecs = apportion(recs, maxSize)
     for i in resultRecs:
-        print(resultRecs[i])
+        print("\t%d %s" % (i, resultRecs[i]))
     return 0
 
 if __name__ == '__main__':
