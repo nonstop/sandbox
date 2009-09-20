@@ -58,7 +58,7 @@ private:
     udp::socket socket_;
     boost::asio::deadline_timer timer_;
     udp::endpoint sender_endpoint_;
-    enum { max_length = 65535 - 1 };
+    enum { max_length = 65000 };
     char data_[max_length];
     char reply_[max_length];
     int cnt_;
