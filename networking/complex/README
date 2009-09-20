@@ -1,0 +1,11 @@
+Testing stand
+
+    Dispatcher works with several handlers. It receives requests from clients,
+pass them to handlers, receives answer and resends it back to client.
+
+client <- UDP -> dispatcher
+dispatcher <- TCP -> handler
+
+start.sh - start testing
+stop.sh - stop testing
+
