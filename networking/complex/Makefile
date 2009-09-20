@@ -10,7 +10,7 @@ LIBS=-lboost_system
 
 all: dispatcher
 
-dispatcher: dispatcher.cc
+dispatcher: dispatcher.cc utils.h
 	$(CC) $< $(FLAGS) $(LIBS) -o $@
 
 clean:
