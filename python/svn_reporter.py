@@ -14,7 +14,9 @@ import os
 import sys
 import datetime
 import xml.parsers.expat
-from popen2 import Popen3
+from subprocess import Popen
+from subprocess import PIPE
+from subprocess import STDOUT
 
 authors = {}
 svnUrl = None
@@ -39,6 +41,7 @@ class Author:
         self.__commits = []
         self.stats = None
     def addCommit(self, revNo):
+        print(self.name, revNo)
         self.__commits.append((revNo))
     def processCommits(self):
         totalRemoved, totalAdded, commits = (0, 0, 0)
@@ -54,10 +57,10 @@ class Author:
         linesRemoved, linesAdded = 0, 0
         #cmd = 'svn diff -c%d | grep "^[-+][^-+]" 2>/dev/null' % commit
         cmd = 'svn diff -x -wb -c%d %s | grep "^[-+][^-+]" 2>/dev/null' % (commit, svnUrl)
-        proc = Popen3(cmd)
-        src = proc.fromchild
+        proc = Popen(cmd, shell=True, stdout=PIPE, close_fds=True)
+        src = proc.stdout
         l = src.readline()
-        while len(l) :                
+        while len(l):
             if l[0] == '-':
                 linesRemoved += 1
             elif l[0] == '+':
@@ -137,8 +140,9 @@ def main(argv=None):
     cmd += ' %s' % svnUrl
 
     p = SvnLogParser()
-    proc = Popen3(cmd)
-    src = proc.fromchild
+    print(cmd)
+    proc = Popen(cmd, shell=True, stdout=PIPE, close_fds=True)
+    src = proc.stdout
     p.ParseFile(src)
     src.close()
 
@@ -148,7 +152,7 @@ def main(argv=None):
     for author in authors:
         au = authors.get(author)
         totalLines += au.processCommits()
-        if au.stats.total:
+        if au.stats.total != None:
             consolePrinter(au.name, au.stats)
 
     if totalLines:
@@ -162,3 +166,4 @@ def main(argv=None):
 
 if __name__ == "__main__":
     sys.exit(main())
+
