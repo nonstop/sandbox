@@ -1,4 +1,5 @@
 *.o
+*.class
 tags
 CMakeCache.txt
 CMakeFiles
