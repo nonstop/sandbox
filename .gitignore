@@ -1,9 +1,11 @@
 *.o
 *.class
+*_.8
 tags
 CMakeCache.txt
 CMakeFiles
 .sconsign.dblite
+golang/hello/hello
 opengl/bounce/bmpview
 opengl/bounce/bounce
 qt/qcalendar/Makefile
