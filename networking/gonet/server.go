@@ -22,6 +22,8 @@ func main() {
         log.Stdoutf("ListenUDP failed: %s", err.String());
         os.Exit(1);
     }
+    udpConn.SetReadTimeout(10);
+    stscall.SetNonblock(udpConn.fd, false);
     var buff [50]byte;
     sz, rUdpAddr, err := udpConn.ReadFromUDP(&buff);
     if err != nil {
