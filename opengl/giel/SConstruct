@@ -1,0 +1,5 @@
+headers = ''
+sources = 'giel.c'
+
+Program('giel', sources.split(), LIBS=['GL', 'glut'])
+
