@@ -236,6 +236,7 @@ void appendBasicUnits(BasicUnit* tail, int count)
     BasicUnit* currentUnit = tail;
     while (count--) {
         currentUnit->next = (BasicUnit*)calloc(1, sizeof(BasicUnit));
+        currentUnit->next->prev = currentUnit;
         currentUnit->next->isOdd = (currentUnit->isOdd) ? 0 : 1;
         currentUnit = currentUnit->next;
         TRACE("count %d odd %d", count, currentUnit->isOdd);

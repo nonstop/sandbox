@@ -166,11 +166,32 @@ static void giel_exit()
 
 void special(int key, int x, int y)
 {
-    giel_exit();
+    TRACE("key=%c(%d) x=%d y=%d", key, key, x, y);
+    switch (key)
+    {
+    case 101:
+        if (globals.currentUnit->next) {
+            globals.currentUnit->isCurrent = 0;
+            globals.currentUnit = globals.currentUnit->next;
+            globals.currentUnit->isCurrent = 1;
+        }
+        break;
+    case 103:
+        if (globals.currentUnit->prev) {
+            globals.currentUnit->isCurrent = 0;
+            globals.currentUnit = globals.currentUnit->prev;
+            globals.currentUnit->isCurrent = 1;
+        }
+        break;
+    default:
+        // pass
+        break;
+    };
 }
 
 void keypress(unsigned char key, int x, int y)
 {
+    TRACE("key=%c(%d) x=%d y=%d", key, key, x, y);
     switch(key)
     {
     case 27://VK_ESCAPE:

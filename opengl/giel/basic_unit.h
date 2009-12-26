@@ -8,6 +8,7 @@ typedef struct BasicUnit
     int isOdd;
     int isCurrent;
     enum BasicUnitRotation rot;
+    struct BasicUnit* prev;
     struct BasicUnit* next;
 } BasicUnit;
 
