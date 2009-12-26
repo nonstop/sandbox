@@ -1,7 +1,7 @@
 #ifndef GIEL_BASIC_UNIT_H
 #define GIEL_BASIC_UNIT_H
 
-enum BasicUnitRotation {BUR_NONE, BUR_RIGHT, BUR_LEFT};
+enum BasicUnitRotation {BUR_NONE, BUR_LEFT, BUR_DOWN, BUR_RIGHT};
 
 typedef struct BasicUnit
 {
@@ -14,10 +14,12 @@ typedef struct BasicUnit
 
 void basic_unit_init_imagelist();
 
-void appendBasicUnits(struct BasicUnit* tail, int count);
-void freeBasicUnits(struct BasicUnit* units);
-void drawBasicUnits(struct BasicUnit* units);
+void appendBasicUnits(BasicUnit* tail, int count);
+void freeBasicUnits(BasicUnit* units);
+void drawBasicUnits(BasicUnit* units);
 
+void base_unit_turn_left(BasicUnit* unit);
+void base_unit_turn_right(BasicUnit* unit);
 
 
 #endif /* GIEL_BASIC_UNIT_H */

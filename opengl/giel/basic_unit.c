@@ -225,6 +225,7 @@ static void drawBasicUnit(const BasicUnit* unit)
         red = 0; green = 0; blue = 0.7;
     }
     glColor4f(red + curr, green + curr, blue + curr, 0.5);
+    glTranslatef(0, 0, -0.5);
     glCallList(BASIC_UNIT_LIST);
     glPopMatrix();
 }
@@ -261,21 +262,43 @@ void drawBasicUnits(BasicUnit* headUnit)
     BasicUnit* currentUnit = headUnit;
     glPushMatrix();
     while (currentUnit) {
-        /*switch (currentUnit->rot)*/
-        /*{*/
-            /*case BUR_LEFT:*/
-                /*glRotatef(90, 1, 0, 0);*/
-                /*break;*/
-            /*case BUR_RIGHT;*/
-                /*glRotatef(-90, 1, 0, 0);*/
-                /*break;*/
-            /*case BUR_NONE:*/
-                // pass
-        /*}*/
+        switch (currentUnit->rot)
+        {
+            case BUR_LEFT:
+                glRotatef(90, 1, 0, 0);
+                break;
+            case BUR_RIGHT:
+                glRotatef(-90, 1, 0, 0);
+                break;
+            case BUR_DOWN:
+                 glRotatef(-180, 1, 0, 0);
+                 break;
+            case BUR_NONE:
+                 break;
+        }
         drawBasicUnit(currentUnit);
         currentUnit = currentUnit->next;
         glTranslatef(-0.5, 0.5, 0);
     }
     glPopMatrix();
+}
+
+void base_unit_turn_left(BasicUnit* unit)
+{
+    int rot = unit->rot;
+    rot++;
+    if (rot > BUR_RIGHT)
+        rot = BUR_NONE;
+    unit->rot = rot;
+    TRACE("rot=%d", rot);
+}
+
+void base_unit_turn_right(BasicUnit* unit)
+{
+    int rot = unit->rot;
+    rot--;
+    if (rot < BUR_NONE)
+        rot = BUR_RIGHT;
+    unit->rot = rot;
 }
 

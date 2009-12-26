@@ -169,14 +169,20 @@ void special(int key, int x, int y)
     TRACE("key=%c(%d) x=%d y=%d", key, key, x, y);
     switch (key)
     {
-    case 101:
+    case 100: // left
+        base_unit_turn_left(globals.currentUnit);
+        break;
+    case 101: // up
         if (globals.currentUnit->next) {
             globals.currentUnit->isCurrent = 0;
             globals.currentUnit = globals.currentUnit->next;
             globals.currentUnit->isCurrent = 1;
         }
         break;
-    case 103:
+    case 102: // right
+        base_unit_turn_right(globals.currentUnit);
+        break;
+    case 103: // down
         if (globals.currentUnit->prev) {
             globals.currentUnit->isCurrent = 0;
             globals.currentUnit = globals.currentUnit->prev;
