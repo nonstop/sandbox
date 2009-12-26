@@ -210,13 +210,23 @@ void basic_unit_init_imagelist()
     glEndList();
 }
 
-static void drawBasicUnit(int isOdd)
+static void drawBasicUnit(const BasicUnit* unit)
 {
-    if (isOdd)
-        glColor4f(0.7, 0, 0, 0.5);
-    else
-        glColor4f(0, 0, 0.7, 0.5);
+    glPushMatrix();
+    GLfloat red = 0, green = 0, blue = 0, curr = 0;
+    if (unit->isCurrent) {
+        curr = 0.2;
+    }
+    if (unit->isOdd) {
+        red = 0.7; green = 0; blue = 0;
+        glTranslatef(0.5, 0.5, 0);
+        glRotatef(180, 0, 0, 1);
+    } else {
+        red = 0; green = 0; blue = 0.7;
+    }
+    glColor4f(red + curr, green + curr, blue + curr, 0.5);
     glCallList(BASIC_UNIT_LIST);
+    glPopMatrix();
 }
 
 void appendBasicUnits(BasicUnit* tail, int count)
@@ -224,7 +234,7 @@ void appendBasicUnits(BasicUnit* tail, int count)
     if (count == 0)
         return;
     BasicUnit* currentUnit = tail;
-    while (--count) {
+    while (count--) {
         currentUnit->next = (BasicUnit*)calloc(1, sizeof(BasicUnit));
         currentUnit->next->isOdd = (currentUnit->isOdd) ? 0 : 1;
         currentUnit = currentUnit->next;
@@ -248,9 +258,23 @@ void freeBasicUnits(BasicUnit* headUnit)
 void drawBasicUnits(BasicUnit* headUnit)
 {
     BasicUnit* currentUnit = headUnit;
+    glPushMatrix();
     while (currentUnit) {
-        drawBasicUnit(currentUnit->isOdd);
+        /*switch (currentUnit->rot)*/
+        /*{*/
+            /*case BUR_LEFT:*/
+                /*glRotatef(90, 1, 0, 0);*/
+                /*break;*/
+            /*case BUR_RIGHT;*/
+                /*glRotatef(-90, 1, 0, 0);*/
+                /*break;*/
+            /*case BUR_NONE:*/
+                // pass
+        /*}*/
+        drawBasicUnit(currentUnit);
         currentUnit = currentUnit->next;
+        glTranslatef(-0.5, 0.5, 0);
     }
+    glPopMatrix();
 }
 
