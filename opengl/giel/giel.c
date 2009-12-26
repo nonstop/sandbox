@@ -3,26 +3,29 @@
 #include <math.h>
 #include <GL/glut.h>
 
+#include "utils.h"
 #include "basic_unit.h"
 
 struct Globals
 {
-    BasicUnit head;
+    BasicUnit* head;
     BasicUnit* currentUnit;
 } globals;
 
 void drawScene()
 {
-    drawBasicUnits(&globals.head);
+    drawBasicUnits(globals.head);
 }
 
 void initScene()
 {
     // TODO
     basic_unit_init_imagelist();
-    globals.currentUnit = &globals.head;
+    globals.head = calloc(1, sizeof(BasicUnit));
+    globals.currentUnit = globals.head;
     globals.currentUnit->isCurrent = 1;
     appendBasicUnits(globals.currentUnit, 7);
+    TRACE("unit=%p", globals.head);
 }
 
 void updateScene()
@@ -155,9 +158,15 @@ void init()
     /*}*/
 }
 
+static void giel_exit()
+{
+    freeBasicUnits(globals.head);
+    exit(0);
+}
+
 void special(int key, int x, int y)
 {
-    exit(0);
+    giel_exit();
 }
 
 void keypress(unsigned char key, int x, int y)
@@ -165,10 +174,10 @@ void keypress(unsigned char key, int x, int y)
     switch(key)
     {
     case 27://VK_ESCAPE:
-        exit(0);
+        giel_exit();
         break;
     default:
-        exit(0);
+        giel_exit();
         break;
     }
 
@@ -200,6 +209,7 @@ int main(int ac, char* av[])
     glutTimerFunc(10, timer, 1); 
     glutSetCursor(GLUT_CURSOR_NONE);
     glutMainLoop();
+    giel_exit();
     return 0;
 }
 

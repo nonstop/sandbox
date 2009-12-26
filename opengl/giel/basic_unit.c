@@ -234,8 +234,11 @@ void appendBasicUnits(BasicUnit* tail, int count)
 
 void freeBasicUnits(BasicUnit* headUnit)
 {
+    TRACE("unit=%p", headUnit);
+    int cnt = 0;
     BasicUnit* currentUnit = headUnit;
     while (currentUnit) {
+        TRACE("count %d odd %d", cnt++, currentUnit->isOdd);
         BasicUnit* tmp = currentUnit->next;
         free(currentUnit);
         currentUnit = tmp;
@@ -244,7 +247,6 @@ void freeBasicUnits(BasicUnit* headUnit)
 
 void drawBasicUnits(BasicUnit* headUnit)
 {
-    int cnt = 0;
     BasicUnit* currentUnit = headUnit;
     while (currentUnit) {
         drawBasicUnit(currentUnit->isOdd);
