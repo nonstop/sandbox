@@ -222,6 +222,7 @@ static void drawBasicUnit(const BasicUnit* unit)
         glTranslatef(0.5, 0.5, 0);
         glRotatef(180, 0, 0, 1);
     } else {
+        glTranslatef(-0.5, 0, 0);
         red = 0; green = 0; blue = 0.7;
     }
     glColor4f(red + curr, green + curr, blue + curr, 0.5);
@@ -262,23 +263,34 @@ void drawBasicUnits(BasicUnit* headUnit)
     BasicUnit* currentUnit = headUnit;
     glPushMatrix();
     while (currentUnit) {
+        GLfloat angle = 0, x = 0, y = 0;
+        if (currentUnit->isOdd) {
+            x = 1; y = 0;
+        } else {
+            x = 0; y = 1;
+        }
         switch (currentUnit->rot)
         {
             case BUR_LEFT:
-                glRotatef(90, 1, 0, 0);
+                angle = 90;
                 break;
             case BUR_RIGHT:
-                glRotatef(-90, 1, 0, 0);
+                angle = -90;
                 break;
             case BUR_DOWN:
-                 glRotatef(-180, 1, 0, 0);
+                angle = -180;
                  break;
             case BUR_NONE:
                  break;
         }
+        glRotatef(angle, x, y, 0);
         drawBasicUnit(currentUnit);
+        if (currentUnit->isOdd) {
+            glTranslatef(-0, 0.5, 0);
+        } else {
+            glTranslatef(-1, 0.5, 0.0);
+        }
         currentUnit = currentUnit->next;
-        glTranslatef(-0.5, 0.5, 0);
     }
     glPopMatrix();
 }
