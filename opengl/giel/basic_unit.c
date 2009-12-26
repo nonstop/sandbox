@@ -1,7 +1,9 @@
 #include <math.h>
+#include <stdlib.h>
 #include <GL/gl.h>
 
 #include "basic_unit.h"
+#include "utils.h"
 
 
 #define VOFFSET 0.045
@@ -63,9 +65,11 @@ static const float wire_prism_v[][3] = {{ 0.0, 0.0, 1.0 },
                { 1.0, 0.0, 0.0 },
                { 0.0, 1.0, 0.0 }};
 
-void drawBasicUnit()
+static const int BASIC_UNIT_LIST = 1;
+
+void basic_unit_init_imagelist()
 {
-    // TODO
+    glNewList(BASIC_UNIT_LIST, GL_COMPILE);
     glBegin(GL_TRIANGLES);
     glNormal3fv(solid_prism_n[0]);
     glVertex3fv(solid_prism_v[0]);
@@ -203,5 +207,48 @@ void drawBasicUnit()
     glVertex3fv(wire_prism_v[2]);
     glVertex3fv(wire_prism_v[5]);
     glEnd();
+    glEndList();
+}
+
+static void drawBasicUnit(int isOdd)
+{
+    if (isOdd)
+        glColor4f(0.7, 0, 0, 0.5);
+    else
+        glColor4f(0, 0, 0.7, 0.5);
+    glCallList(BASIC_UNIT_LIST);
+}
+
+void appendBasicUnits(BasicUnit* tail, int count)
+{
+    if (count == 0)
+        return;
+    BasicUnit* currentUnit = tail;
+    while (--count) {
+        currentUnit->next = (BasicUnit*)calloc(1, sizeof(BasicUnit));
+        currentUnit->next->isOdd = (currentUnit->isOdd) ? 0 : 1;
+        currentUnit = currentUnit->next;
+        TRACE("count %d odd %d", count, currentUnit->isOdd);
+    }
+}
+
+void freeBasicUnits(BasicUnit* headUnit)
+{
+    BasicUnit* currentUnit = headUnit;
+    while (currentUnit) {
+        BasicUnit* tmp = currentUnit->next;
+        free(currentUnit);
+        currentUnit = tmp;
+    }
+}
+
+void drawBasicUnits(BasicUnit* headUnit)
+{
+    int cnt = 0;
+    BasicUnit* currentUnit = headUnit;
+    while (currentUnit) {
+        drawBasicUnit(currentUnit->isOdd);
+        currentUnit = currentUnit->next;
+    }
 }
 

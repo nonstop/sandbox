@@ -1,17 +1,28 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
-
 #include <GL/glut.h>
+
+#include "basic_unit.h"
+
+struct Globals
+{
+    BasicUnit head;
+    BasicUnit* currentUnit;
+} globals;
 
 void drawScene()
 {
-    drawBasicUnit();
+    drawBasicUnits(&globals.head);
 }
 
 void initScene()
 {
     // TODO
+    basic_unit_init_imagelist();
+    globals.currentUnit = &globals.head;
+    globals.currentUnit->isCurrent = 1;
+    appendBasicUnits(globals.currentUnit, 7);
 }
 
 void updateScene()
@@ -26,7 +37,7 @@ void axes()
     GLint width;
     glGetIntegerv(GL_LINE_WIDTH, &width);
 
-    glLineWidth(5);
+    glLineWidth(2);
 
     glBegin(GL_LINES);
     glColor3f(1.0, 0, 0);
@@ -107,7 +118,7 @@ void init()
     /*glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);    // Realy Nice perspective calculations*/
     /*glEnable(GL_TEXTURE_2D);                                // Enable Texture Mapping*/
 
-    /*initScene();*/
+    initScene();
     
     float light_pos[][3] = {{0.0, 10.0, 20.0}, {0.0, 20.0, -1.0}};
     float light_dir[][3] = {{0.0, -10.0,-20.0}, {0.0,-20.0, 1.0}};
@@ -123,11 +134,11 @@ void init()
     /*}*/
 
     /*if (!wireframe) {*/
-    /*glColor4f(1.0, 1.0, 1.0, 1.0);*/
+    glColor4f(1.0, 1.0, 1.0, 1.0);
     glLightfv(GL_LIGHT0, GL_POSITION, light_pos[0]);
     glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light_dir[0]);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, white_light);
-    /*glLightfv(GL_LIGHT0, GL_SPECULAR, white_light);*/
+    glLightfv(GL_LIGHT0, GL_SPECULAR, white_light);
 #if 1
     glLightfv(GL_LIGHT1, GL_POSITION, light_pos[1]);
     glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, light_dir[1]);
@@ -140,7 +151,7 @@ void init()
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_LIGHT1);
-    /*glEnable(GL_COLOR_MATERIAL);*/
+    glEnable(GL_COLOR_MATERIAL);
     /*}*/
 }
 
