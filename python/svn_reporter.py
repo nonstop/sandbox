@@ -41,7 +41,7 @@ class Author:
         self.__commits = []
         self.stats = None
     def addCommit(self, revNo):
-        print(self.name, revNo)
+        #print(self.name, revNo)
         self.__commits.append((revNo))
     def processCommits(self):
         totalRemoved, totalAdded, commits = (0, 0, 0)
@@ -117,7 +117,7 @@ def consolePrinter(author, stats):
         total = str(total)
     else:
         total = '+' + str(total)
-    print '%s\t%d\t+%d\t-%d\t%s' % (author, stats.commits, stats.addedLines, stats.removedLines, total)
+    print('{0:>12} {1:>5}: {2:>7} {3:>7} = {4:>7}'.format(author, stats.commits, '+' + str(stats.addedLines), '-' + str(stats.removedLines), total))
 
 def main(argv=None):
     if argv is None:
@@ -140,7 +140,7 @@ def main(argv=None):
     cmd += ' %s' % svnUrl
 
     p = SvnLogParser()
-    print(cmd)
+    #print(cmd)
     proc = Popen(cmd, shell=True, stdout=PIPE, close_fds=True)
     src = proc.stdout
     p.ParseFile(src)
@@ -149,12 +149,17 @@ def main(argv=None):
 #    p.ParseFile(file('a.xml'))
     totalLines = 0
     global authors
+    resultAuthors = []
     for author in authors:
+        #print(author)
         au = authors.get(author)
         totalLines += au.processCommits()
         if au.stats.total != None:
-            consolePrinter(au.name, au.stats)
+            resultAuthors.append(au)
 
+    resultAuthors.sort(lambda l, r: cmp(l.name, r.name))
+    for author in resultAuthors:
+        consolePrinter(author.name, author.stats)
     if totalLines:
         if totalLines > 0:
             print "total: +%d" % totalLines
