@@ -24,7 +24,7 @@ void initScene()
     globals.head = calloc(1, sizeof(BasicUnit));
     globals.currentUnit = globals.head;
     globals.currentUnit->isCurrent = 1;
-    appendBasicUnits(globals.currentUnit, 7);
+    appendBasicUnits(globals.currentUnit, 13);
     TRACE("unit=%p", globals.head);
 }
 
@@ -81,6 +81,7 @@ void display()
 
 void reshape(int w, int h)
 {
+#if 0
     glViewport(0, 0, (GLint) w, (GLint) h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -91,6 +92,7 @@ void reshape(int w, int h)
     /*gluLookAt(0.0, 0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);*/
     glLoadIdentity();
 return;
+#endif // 0
     glViewport(0, 0, w, h);                // Set the viewport for the OpenGL window
     glMatrixMode(GL_PROJECTION);            // Change Matrix Mode to Projection
     glLoadIdentity();                        // Reset View
@@ -132,8 +134,8 @@ void init()
     /*glEnable(GL_CULL_FACE);*/
     glEnable(GL_NORMALIZE);
     /*if (transparent) {*/
-    /*glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);*/
-    /*glEnable(GL_BLEND);*/
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
     /*}*/
 
     /*if (!wireframe) {*/
@@ -226,7 +228,7 @@ int main(int ac, char* av[])
 
     glutInitWindowSize(300, 300);
     glutCreateWindow("giel");
-    //    glutFullScreen();
+        /*glutFullScreen();*/
 
     init();
     glutDisplayFunc(display);
