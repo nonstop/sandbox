@@ -10,7 +10,8 @@ struct Globals
 {
     BasicUnit* head;
     BasicUnit* currentUnit;
-} globals;
+    int width, height;
+} globals = {};
 
 void drawScene()
 {
@@ -24,7 +25,7 @@ void initScene()
     globals.head = calloc(1, sizeof(BasicUnit));
     globals.currentUnit = globals.head;
     globals.currentUnit->isCurrent = 1;
-    appendBasicUnits(globals.currentUnit, 13);
+    appendBasicUnits(globals.currentUnit, 24);
     TRACE("unit=%p", globals.head);
 }
 
@@ -60,49 +61,44 @@ void axes()
     glPopMatrix();
 }
 
+void displayInfo()
+{
+    static const int infoAreaWidth = 50;
+    static const int infoAreaHeight = 50;
+    glViewport(globals.width - infoAreaWidth, 0, infoAreaWidth, infoAreaHeight);
+    glPushMatrix();
+    axes();
+    glPopMatrix();
+}
+
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glPushMatrix();
-
-    axes();
-    drawScene();
-
-    glPopMatrix();
-
     glLoadIdentity();
+    glViewport(0, 0, globals.width, globals.height);
+
     gluLookAt(20.0, 20.0, 20.0, 
                 0.0, 0.0, 0.0,
                 0.0, 1.0, 0.0);
 
+    glPushMatrix();
+    /*axes();*/
+    drawScene();
+    glPopMatrix();
+    
+    displayInfo();
     glutSwapBuffers();
 }
 
 void reshape(int w, int h)
 {
-#if 0
-    glViewport(0, 0, (GLint) w, (GLint) h);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    /* jwz: 0.05 was too close (left black rectangles) */
-    gluPerspective(25.0, (GLdouble) w / (GLdouble) h, 1.0, 100.0);
-    gluLookAt(0.0, 0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-    glMatrixMode(GL_MODELVIEW);
-    /*gluLookAt(0.0, 0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);*/
-    glLoadIdentity();
-return;
-#endif // 0
-    glViewport(0, 0, w, h);                // Set the viewport for the OpenGL window
-    glMatrixMode(GL_PROJECTION);            // Change Matrix Mode to Projection
-    glLoadIdentity();                        // Reset View
-
-// Do the perspective calculations. Last value = max clipping depth
+    globals.width = w;
+    globals.height = h;
+    glViewport (0, 0, (GLsizei) w, (GLsizei) h); 
+    glMatrixMode (GL_PROJECTION);
+    glLoadIdentity ();
     gluPerspective(60.0, w/h, 1.0, 100.0);
-
-    glMatrixMode(GL_MODELVIEW);            // Return to the modelview matrix
-    glLoadIdentity();                        // Reset View
-
+    glMatrixMode (GL_MODELVIEW);
     glutPostRedisplay();
 }
 
@@ -114,14 +110,6 @@ static const GLfloat mat_shininess[] = { 20.0 };
 void init()
 {
     srand(time(NULL));
-    /*glClearColor(0.1f, 0.1f, 0.4f, 0.0);                    // Dark Blue Background*/
-    /*glShadeModel(GL_SMOOTH);                                // Enables Smooth Color Shading*/
-    /*glClearDepth(1.0);                                    // Depth Buffer Setup*/
-    /*glDepthFunc(GL_LESS);                                    // The Type Of Depth Test To Do*/
-    /*glBlendFunc(GL_SRC_ALPHA, GL_ONE);*/
-
-    /*glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);    // Realy Nice perspective calculations*/
-    /*glEnable(GL_TEXTURE_2D);                                // Enable Texture Mapping*/
 
     initScene();
     
