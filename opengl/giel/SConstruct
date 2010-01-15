@@ -1,0 +1,5 @@
+headers = 'basic_unit.h'
+sources = 'basic_unit.c giel.c'
+
+Program('giel', sources.split(), LIBS=['GL', 'glut'])
+

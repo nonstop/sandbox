@@ -1,0 +1,11 @@
+Rubik's snake game
+
+Giel or Snagl
+
+
+keys:
+n+ - add unit
+n- - remove unit
+left - turn current unit left
+right - turn current unit right
+
