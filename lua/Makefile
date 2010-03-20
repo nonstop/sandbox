@@ -1,6 +1,6 @@
 .PHONY : clean rebuild install uninstall
 
-FLAGS=-Wall
+FLAGS=-Wall -std=c99
 
 CC=gcc
 
