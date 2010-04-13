@@ -45,28 +45,50 @@ static void traceElems(const char* file, int line)
     } while (elem != glob.firstElem);
 }
 
-static void iter()
+static float sqr(float x)
+{
+    return x * x;
+}
+
+static void iterate()
 {
     struct PointsElement* elem = glob.firstElem;
     do {
         struct PointsElement* nextElem = elem->next;
-        GLfloat new_x = (elem->pt.x + elem->next->pt.x) / 2.0;
-        GLfloat new_y = (elem->pt.y + elem->next->pt.y) / 2.0;
-        appendPoint(elem, new_x, new_y);
+        const GLfloat delta_x = nextElem->pt.x - elem->pt.x;
+        const GLfloat delta_y = nextElem->pt.y - elem->pt.y;
+        const GLfloat hypo = sqrtf(sqr(delta_x) + sqr(delta_y));
+        const GLfloat newHypo = hypo / 3.0;
+        TRACE("hypo=%f delta_x=%f delta_y=%f", hypo, delta_x, delta_y);
+        GLfloat x1 = elem->pt.x + delta_x / 3.0;
+        GLfloat y1 = elem->pt.y + delta_y / 3.0;
+        TRACE("x1=%f y1=%f", x1, y1);
+        
+        GLfloat x2 = x1 - newHypo * sin(30);
+        GLfloat y2 = y1 + newHypo * cos(30);
+        TRACE("x2=%f y2=%f", x2, y2);
+        
+        GLfloat x3 = elem->pt.x + delta_x * 2.0 / 3.0;
+        GLfloat y3 = elem->pt.y + delta_y * 2.0 / 3.0;
+        TRACE("x3=%f y3=%f", x3, y3);
+        appendPoint(elem, x3, y3);
+        appendPoint(elem, x2, y2);
+        appendPoint(elem, x1, y1);
+        
         elem = nextElem;
     } while (elem != glob.firstElem);
 }
 
 static void initScene()
 {
-    struct PointsElement* elem = appendPoint(NULL, 0, 0.5);
+    struct PointsElement* elem = appendPoint(NULL, 0, 0.7);
     glob.firstElem = elem;
     glob.firstElem->next = glob.firstElem;
-    elem = appendPoint(elem, -0.5, -0.5);
-    elem = appendPoint(elem, 0.5, -0.5);
+    elem = appendPoint(elem, 0.976063, -0.608503);
+    elem = appendPoint(elem, -0.976063, -0.608503);
     TRACE("glob.firstElem=%p", glob.firstElem);
     traceElems(__FILE__, __LINE__);
-    iter();
+    iterate();
     traceElems(__FILE__, __LINE__);
 }
 
