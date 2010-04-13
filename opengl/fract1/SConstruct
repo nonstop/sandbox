@@ -1,0 +1,3 @@
+sources = 'fract1.c'
+
+Program('fract1', sources.split(), LIBS=['GL', 'glut'])
