@@ -5,6 +5,10 @@
 #include "basic_unit.h"
 #include "utils.h"
 
+#ifndef M_SQRT1_2
+# define M_SQRT1_2	0.70710678118654752440	/* 1/sqrt(2) */
+#endif // M_SQRT1_2
+
 
 #define VOFFSET 0.045
 /* the triangular prism what makes up the basic unit */

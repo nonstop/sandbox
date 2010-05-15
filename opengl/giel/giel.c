@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
-#include <GL/glut.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <SDL.h>
 
 #include "utils.h"
 #include "basic_unit.h"
@@ -10,30 +12,11 @@ struct Globals
 {
     BasicUnit* head;
     BasicUnit* currentUnit;
-} globals;
-
-void drawScene()
-{
-    drawBasicUnits(globals.head);
-}
-
-void initScene()
-{
-    // TODO
-    basic_unit_init_imagelist();
-    globals.head = calloc(1, sizeof(BasicUnit));
-    globals.currentUnit = globals.head;
-    globals.currentUnit->isCurrent = 1;
-    appendBasicUnits(globals.currentUnit, 7);
-    TRACE("unit=%p", globals.head);
-}
-
-void updateScene()
-{
-}
+    int width, height;
+} globals = {};
 
 // Оси координат
-void axes()
+static void axes()
 {
     glPushMatrix();
 
@@ -60,48 +43,59 @@ void axes()
     glPopMatrix();
 }
 
-void display()
+static void displayInfo()
+{
+    static const int infoAreaWidth = 50;
+    static const int infoAreaHeight = 50;
+    glViewport(globals.width - infoAreaWidth, 0, infoAreaWidth, infoAreaHeight);
+    glPushMatrix();
+    axes();
+    glPopMatrix();
+}
+
+static void drawScene()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glPushMatrix();
-
-    axes();
-    drawScene();
-
-    glPopMatrix();
-
     glLoadIdentity();
+    glViewport(0, 0, globals.width, globals.height);
+
     gluLookAt(20.0, 20.0, 20.0, 
                 0.0, 0.0, 0.0,
                 0.0, 1.0, 0.0);
 
-    glutSwapBuffers();
+    glPushMatrix();
+    /*axes();*/
+    drawBasicUnits(globals.head);
+    glPopMatrix();
+    
+    displayInfo();
+    /*glutSwapBuffers();*/
 }
 
-void reshape(int w, int h)
+static void initScene()
 {
-    glViewport(0, 0, (GLint) w, (GLint) h);
+    // TODO
+    basic_unit_init_imagelist();
+    globals.head = calloc(1, sizeof(BasicUnit));
+    globals.currentUnit = globals.head;
+    globals.currentUnit->isCurrent = 1;
+    appendBasicUnits(globals.currentUnit, 24);
+    TRACE("unit=%p", globals.head);
+}
+
+static void updateScene(Uint32 millisecs)
+{
+}
+
+static void reshape(int w, int h)
+{
+    globals.width = w;
+    globals.height = h;
+    glViewport(0, 0, (GLsizei) w, (GLsizei) h); 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    /* jwz: 0.05 was too close (left black rectangles) */
-    gluPerspective(25.0, (GLdouble) w / (GLdouble) h, 1.0, 100.0);
-    gluLookAt(0.0, 0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-    glMatrixMode(GL_MODELVIEW);
-    /*gluLookAt(0.0, 0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);*/
-    glLoadIdentity();
-return;
-    glViewport(0, 0, w, h);                // Set the viewport for the OpenGL window
-    glMatrixMode(GL_PROJECTION);            // Change Matrix Mode to Projection
-    glLoadIdentity();                        // Reset View
-
-// Do the perspective calculations. Last value = max clipping depth
     gluPerspective(60.0, w/h, 1.0, 100.0);
-
-    glMatrixMode(GL_MODELVIEW);            // Return to the modelview matrix
-    glLoadIdentity();                        // Reset View
-
-    glutPostRedisplay();
+    glMatrixMode(GL_MODELVIEW);
 }
 
 
@@ -109,17 +103,9 @@ static const GLfloat white_light[] = { 1.0, 1.0, 1.0, 1.0 };
 static const GLfloat lmodel_ambient[] = { 0.2, 0.2, 0.2, 1.0 };
 static const GLfloat mat_specular[] = { 0.1, 0.1, 0.1, 1.0 };
 static const GLfloat mat_shininess[] = { 20.0 };
-void init()
+static void init()
 {
     srand(time(NULL));
-    /*glClearColor(0.1f, 0.1f, 0.4f, 0.0);                    // Dark Blue Background*/
-    /*glShadeModel(GL_SMOOTH);                                // Enables Smooth Color Shading*/
-    /*glClearDepth(1.0);                                    // Depth Buffer Setup*/
-    /*glDepthFunc(GL_LESS);                                    // The Type Of Depth Test To Do*/
-    /*glBlendFunc(GL_SRC_ALPHA, GL_ONE);*/
-
-    /*glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);    // Realy Nice perspective calculations*/
-    /*glEnable(GL_TEXTURE_2D);                                // Enable Texture Mapping*/
 
     initScene();
     
@@ -132,8 +118,8 @@ void init()
     /*glEnable(GL_CULL_FACE);*/
     glEnable(GL_NORMALIZE);
     /*if (transparent) {*/
-    /*glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);*/
-    /*glEnable(GL_BLEND);*/
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
     /*}*/
 
     /*if (!wireframe) {*/
@@ -164,78 +150,144 @@ static void giel_exit()
     exit(0);
 }
 
-void special(int key, int x, int y)
+static void giel_save()
 {
-    TRACE("key=%c(%d) x=%d y=%d", key, key, x, y);
-    switch (key)
-    {
-    case 100: // left
+    fprintf(stderr, "units=[");
+    BasicUnit* u = globals.head;
+    while (u) {
+        if (u == globals.head) {
+            fprintf(stderr, "%d", u->rot);
+        } else {
+            fprintf(stderr, ",%d", u->rot);
+        }
+        u = u->next;
+    }
+    fprintf(stderr, "]\n");
+}
+
+void giel_terminate()
+{
+	static SDL_Event Q;
+	Q.type = SDL_QUIT;
+	if (SDL_PushEvent(&Q) == -1) {
+		TRACE("SDL_QUIT event can't be pushed: %s", SDL_GetError() );
+		giel_exit();
+	}
+}
+
+static void keypress(Uint8* keys)
+{
+	if (!keys) {
+        return;
+    }
+    if (keys[SDLK_ESCAPE]) {
+        giel_terminate();
+    }
+    if (keys[SDLK_LEFT]) {
         base_unit_turn_left(globals.currentUnit);
-        break;
-    case 101: // up
+    }
+    if (keys[SDLK_RIGHT]) {
+        base_unit_turn_right(globals.currentUnit);
+    }
+    if (keys[SDLK_UP]) {
         if (globals.currentUnit->next) {
             globals.currentUnit->isCurrent = 0;
             globals.currentUnit = globals.currentUnit->next;
             globals.currentUnit->isCurrent = 1;
         }
-        break;
-    case 102: // right
-        base_unit_turn_right(globals.currentUnit);
-        break;
-    case 103: // down
+    }
+    if (keys[SDLK_DOWN]) {
         if (globals.currentUnit->prev) {
             globals.currentUnit->isCurrent = 0;
             globals.currentUnit = globals.currentUnit->prev;
             globals.currentUnit->isCurrent = 1;
         }
-        break;
-    default:
-        // pass
-        break;
-    };
-}
-
-void keypress(unsigned char key, int x, int y)
-{
-    TRACE("key=%c(%d) x=%d y=%d", key, key, x, y);
-    switch(key)
-    {
-    case 27://VK_ESCAPE:
-        giel_exit();
-        break;
-    default:
-        giel_exit();
-        break;
     }
-
-    glutPostRedisplay();
-}
-
-void timer(int value)
-{
-    updateScene();
-    glutPostRedisplay();
-
-    glutTimerFunc(10, timer, 1); 
 }
 
 int main(int ac, char* av[])
 {
-    glutInit(&ac, av);
-    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        TRACE("Unable to init SDL: %s", SDL_GetError());
+        return 1;
+    }
+    atexit(SDL_Quit);
 
-    glutInitWindowSize(300, 300);
-    glutCreateWindow("giel");
-    //    glutFullScreen();
+    const int defaultWidth = 300, defaultHeight = 300;
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_Surface* screen = SDL_SetVideoMode(defaultWidth, defaultHeight, 16, SDL_HWSURFACE|SDL_OPENGL);
+    if (!screen) {
+        TRACE("Unable to set video mode: %s", SDL_GetError());
+        return 1;
+    }
+    SDL_FillRect(screen, NULL, SDL_MapRGBA(screen->format, 0, 0, 0, 0));
+    reshape(defaultWidth, defaultHeight);
+
+	SDL_WM_SetCaption("giel", NULL);
 
     init();
-    glutDisplayFunc(display);
-    glutReshapeFunc(reshape);
-    glutKeyboardFunc(keypress);
-    glutSpecialFunc(special);
-    glutTimerFunc(10, timer, 1); 
-    glutSetCursor(GLUT_CURSOR_NONE);
-    glutMainLoop();
+    SDL_ShowCursor(0);
+    int appVisible = 1, appMouseFocus = 0, appKeyboardFocus = 0;
+	int isProgramLooping = 1;
+    Uint32 tickCount = 0, lastCount = SDL_GetTicks();
+	while (isProgramLooping) {
+        SDL_Event ev = {};
+        Uint8 *keys = NULL;
+		if (SDL_PollEvent(&ev)) {
+			switch (ev.type)
+			{
+			case SDL_QUIT:
+				{
+					isProgramLooping = 0;
+					break;
+				}
+
+			case SDL_VIDEORESIZE:
+				{
+					reshape(ev.resize.w, ev.resize.h);
+					break;
+				}
+
+			case SDL_ACTIVEEVENT:
+				{
+					if (ev.active.state & SDL_APPACTIVE) {
+                        appVisible = ev.active.gain ? 1 : 0;
+					}
+					
+					if (ev.active.state & SDL_APPMOUSEFOCUS) {
+                        appMouseFocus = ev.active.gain ? 1 : 0;
+					}
+
+					if (ev.active.state & SDL_APPINPUTFOCUS) {
+                        appKeyboardFocus = ev.active.gain ? 1 : 0;
+					}
+					break;
+				}
+
+			case SDL_KEYDOWN:
+				{
+					keys = SDL_GetKeyState(NULL);
+					break;
+				}
+
+			}
+		}
+        if (!appVisible) {
+            SDL_WaitEvent(NULL);
+        } else {
+            tickCount = SDL_GetTicks();
+            keypress(keys);
+            updateScene(tickCount - lastCount);
+            lastCount = tickCount;
+            drawScene(/*screen*/);
+            SDL_GL_SwapBuffers();
+        }
+	}
+
     giel_exit();
     return 0;
 }
