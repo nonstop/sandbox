@@ -74,12 +74,15 @@ static int print_table__(lua_State* ls, const int tableIndex)
         /*TRACE("[%s]-[%s]",*/
                 /*lua_typename(ls, lua_type(ls, -2)),*/
                 /*lua_typename(ls, lua_type(ls, -1)));*/
-        const char* name = lua_tostring(ls, -2);
-        if (lua_isstring(ls, -1)) {
-            TRACE("[%s]=[%s]", name, lua_tostring(ls, -1));
-        } else if (lua_isnumber(ls, -1)) {
-            TRACE("[%s]=[%d]", name, lua_tonumber(ls, -1));
-        } else if (lua_istable(ls, -1)) {
+        const char* name = "";
+        if (lua_isstring(ls, tableIndex +1) && !lua_isnumber(ls, tableIndex + 1)) {
+            name = lua_tostring(ls, tableIndex + 1);
+        }
+        if (lua_isnumber(ls, tableIndex + 2)) {
+            TRACE("[%s]=[%d]", name, lua_tonumber(ls, tableIndex + 2));
+        } else if (lua_isstring(ls, tableIndex + 2)) {
+            TRACE("[%s]=[%s]", name, lua_tostring(ls, tableIndex + 2));
+        } else if (lua_istable(ls, tableIndex + 2)) {
             TRACE("[%s]=[table]", name);
             print_table__(ls, tableIndex + 2);
         }
