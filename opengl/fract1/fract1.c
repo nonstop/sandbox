@@ -64,8 +64,10 @@ static void iterate()
         GLfloat y1 = elem->pt.y + delta_y / 3.0;
         TRACE("x1=%f y1=%f", x1, y1);
         
-        GLfloat x2 = x1 - newHypo * sin(30);
-        GLfloat y2 = y1 + newHypo * cos(30);
+        /*GLfloat x2 = x1 - newHypo * delta_y / hypo;*/
+        /*GLfloat y2 = y1 + newHypo * delta_x / hypo;*/
+        GLfloat x2 = x1 - newHypo * delta_y / hypo;
+        GLfloat y2 = y1 + newHypo * delta_x / hypo;
         TRACE("x2=%f y2=%f", x2, y2);
         
         GLfloat x3 = elem->pt.x + delta_x * 2.0 / 3.0;
@@ -81,14 +83,17 @@ static void iterate()
 
 static void initScene()
 {
-    struct PointsElement* elem = appendPoint(NULL, 0, 0.7);
+    struct PointsElement* elem = appendPoint(NULL, 0, 0.5);
     glob.firstElem = elem;
     glob.firstElem->next = glob.firstElem;
-    elem = appendPoint(elem, 0.976063, -0.608503);
-    elem = appendPoint(elem, -0.976063, -0.608503);
+    elem = appendPoint(elem, 0.976063, -0.408503);
+    elem = appendPoint(elem, -0.976063, -0.408503);
     TRACE("glob.firstElem=%p", glob.firstElem);
     traceElems(__FILE__, __LINE__);
-    iterate();
+    int i = 0;
+    for (; i < 1; ++i) {
+        iterate();
+    }
     traceElems(__FILE__, __LINE__);
 }
 
