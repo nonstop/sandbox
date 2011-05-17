@@ -245,7 +245,7 @@ void appendBasicUnits(BasicUnit* tail, int count)
         currentUnit->next->prev = currentUnit;
         currentUnit->next->isOdd = (currentUnit->isOdd) ? 0 : 1;
         currentUnit = currentUnit->next;
-        TRACE("count %d odd %d", count, currentUnit->isOdd);
+        TRACE("%p prev=%p count %d odd %d", currentUnit, currentUnit->prev, count, currentUnit->isOdd);
     }
 }
 
@@ -299,7 +299,7 @@ void drawBasicUnits(BasicUnit* headUnit)
     glPopMatrix();
 }
 
-void base_unit_turn_left(BasicUnit* unit)
+void basic_unit_turn_left(BasicUnit* unit)
 {
     int rot = unit->rot;
     rot++;
@@ -309,7 +309,7 @@ void base_unit_turn_left(BasicUnit* unit)
     TRACE("rot=%d", rot);
 }
 
-void base_unit_turn_right(BasicUnit* unit)
+void basic_unit_turn_right(BasicUnit* unit)
 {
     int rot = unit->rot;
     rot--;

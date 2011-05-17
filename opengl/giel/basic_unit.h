@@ -18,8 +18,8 @@ void appendBasicUnits(BasicUnit* tail, int count);
 void freeBasicUnits(BasicUnit* units);
 void drawBasicUnits(BasicUnit* units);
 
-void base_unit_turn_left(BasicUnit* unit);
-void base_unit_turn_right(BasicUnit* unit);
+void basic_unit_turn_left(BasicUnit* unit);
+void basic_unit_turn_right(BasicUnit* unit);
 
 
 #endif /* GIEL_BASIC_UNIT_H */

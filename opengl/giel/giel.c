@@ -6,15 +6,10 @@
 #include <SDL.h>
 
 #include "utils.h"
+#include "giel_lua.h"
 #include "basic_unit.h"
 
-struct Globals
-{
-    BasicUnit* head;
-    BasicUnit* currentUnit;
-    int width, height;
-} globals = {};
-
+Globals globals = {};
 // Оси координат
 static void axes()
 {
@@ -65,6 +60,9 @@ static void drawScene()
 
     glPushMatrix();
     /*axes();*/
+    glRotatef(globals.rotateX, 0, 1, 1);
+    glRotatef(globals.rotateY, 1, 0, 1);
+    glRotatef(globals.rotateZ, 1, 1, 0);
     drawBasicUnits(globals.head);
     glPopMatrix();
     
@@ -74,13 +72,10 @@ static void drawScene()
 
 static void initScene()
 {
-    // TODO
-    basic_unit_init_imagelist();
     globals.head = calloc(1, sizeof(BasicUnit));
     globals.currentUnit = globals.head;
     globals.currentUnit->isCurrent = 1;
     appendBasicUnits(globals.currentUnit, 24);
-    TRACE("unit=%p", globals.head);
 }
 
 static void updateScene(Uint32 millisecs)
@@ -94,7 +89,7 @@ static void reshape(int w, int h)
     glViewport(0, 0, (GLsizei) w, (GLsizei) h); 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(60.0, w/h, 1.0, 100.0);
+    gluPerspective(40.0, w/h, 1.0, 60.0);
     glMatrixMode(GL_MODELVIEW);
 }
 
@@ -103,11 +98,18 @@ static const GLfloat white_light[] = { 1.0, 1.0, 1.0, 1.0 };
 static const GLfloat lmodel_ambient[] = { 0.2, 0.2, 0.2, 1.0 };
 static const GLfloat mat_specular[] = { 0.1, 0.1, 0.1, 1.0 };
 static const GLfloat mat_shininess[] = { 20.0 };
-static void init()
+static void init(const char* initFile)
 {
     srand(time(NULL));
 
-    initScene();
+    basic_unit_init_imagelist();
+    if (initFile) {
+        initSceneFromFile(&globals, initFile);
+    }
+    if (!globals.head) {
+        initScene();
+    }
+    TRACE("unit=%p", globals.head);
     
     float light_pos[][3] = {{0.0, 10.0, 20.0}, {0.0, 20.0, -1.0}};
     float light_dir[][3] = {{0.0, -10.0,-20.0}, {0.0,-20.0, 1.0}};
@@ -152,17 +154,14 @@ static void giel_exit()
 
 static void giel_save()
 {
-    fprintf(stderr, "units=[");
+    char buff[] = "-/|\\";
+    fprintf(stderr, "setForm('form', '");
     BasicUnit* u = globals.head;
     while (u) {
-        if (u == globals.head) {
-            fprintf(stderr, "%d", u->rot);
-        } else {
-            fprintf(stderr, ",%d", u->rot);
-        }
+        fprintf(stderr, "%c", buff[u->rot]);
         u = u->next;
     }
-    fprintf(stderr, "]\n");
+    fprintf(stderr, "')\n");
 }
 
 void giel_terminate()
@@ -175,7 +174,7 @@ void giel_terminate()
 	}
 }
 
-static void keypress(Uint8* keys)
+static void keypress(SDLMod mode, Uint8* keys)
 {
 	if (!keys) {
         return;
@@ -184,16 +183,19 @@ static void keypress(Uint8* keys)
         giel_terminate();
     }
     if (keys[SDLK_LEFT]) {
-        base_unit_turn_left(globals.currentUnit);
+        basic_unit_turn_left(globals.currentUnit);
+        keys[SDLK_LEFT] = 0;
     }
     if (keys[SDLK_RIGHT]) {
-        base_unit_turn_right(globals.currentUnit);
+        basic_unit_turn_right(globals.currentUnit);
+        keys[SDLK_RIGHT] = 0;
     }
     if (keys[SDLK_UP]) {
         if (globals.currentUnit->next) {
             globals.currentUnit->isCurrent = 0;
             globals.currentUnit = globals.currentUnit->next;
             globals.currentUnit->isCurrent = 1;
+            keys[SDLK_UP] = 0;
         }
     }
     if (keys[SDLK_DOWN]) {
@@ -201,8 +203,30 @@ static void keypress(Uint8* keys)
             globals.currentUnit->isCurrent = 0;
             globals.currentUnit = globals.currentUnit->prev;
             globals.currentUnit->isCurrent = 1;
+            keys[SDLK_DOWN] = 0;
         }
     }
+    if (keys[SDLK_RETURN]) {
+        giel_save();
+    }
+#define checkRotate(sdl_key, field) \
+    if (keys[sdl_key]) { \
+        if (mode & KMOD_SHIFT) { \
+            globals.field -= 1; \
+        } else { \
+            globals.field += 1; \
+        } \
+        if (globals.field > 360) { \
+            globals.field = 0; \
+        } \
+        if (globals.field < 0) { \
+            globals.field = 360; \
+        } \
+        TRACE("key "#sdl_key " %x ", SDL_GetModState() & KMOD_SHIFT); \
+    }
+    checkRotate(SDLK_x, rotateX);
+    checkRotate(SDLK_y, rotateY);
+    checkRotate(SDLK_z, rotateZ);
 }
 
 int main(int ac, char* av[])
@@ -213,7 +237,8 @@ int main(int ac, char* av[])
     }
     atexit(SDL_Quit);
 
-    const int defaultWidth = 300, defaultHeight = 300;
+    /*const int defaultWidth = 300, defaultHeight = 300;*/
+    const int defaultWidth = 600, defaultHeight = 600;
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
@@ -229,14 +254,14 @@ int main(int ac, char* av[])
 
 	SDL_WM_SetCaption("giel", NULL);
 
-    init();
+    init(ac == 2 ? av[1] : NULL);
     SDL_ShowCursor(0);
     int appVisible = 1, appMouseFocus = 0, appKeyboardFocus = 0;
 	int isProgramLooping = 1;
     Uint32 tickCount = 0, lastCount = SDL_GetTicks();
 	while (isProgramLooping) {
-        SDL_Event ev = {};
         Uint8 *keys = NULL;
+        SDL_Event ev = {};
 		if (SDL_PollEvent(&ev)) {
 			switch (ev.type)
 			{
@@ -267,20 +292,14 @@ int main(int ac, char* av[])
 					}
 					break;
 				}
-
-			case SDL_KEYDOWN:
-				{
-					keys = SDL_GetKeyState(NULL);
-					break;
-				}
-
 			}
 		}
         if (!appVisible) {
             SDL_WaitEvent(NULL);
         } else {
+            keys = SDL_GetKeyState(NULL);
             tickCount = SDL_GetTicks();
-            keypress(keys);
+            keypress(SDL_GetModState(), keys);
             updateScene(tickCount - lastCount);
             lastCount = tickCount;
             drawScene(/*screen*/);
