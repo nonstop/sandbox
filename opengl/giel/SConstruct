@@ -1,5 +1,7 @@
-headers = 'basic_unit.h'
-sources = 'basic_unit.c giel.c'
+headers = 'basic_unit.h giel.h giel_lua.h'
+sources = 'basic_unit.c giel_lua.c giel.c'
 
-Program('giel', sources.split(), LIBS=['GL', 'glut'])
+Program('giel', sources.split(),
+        CFLAGS=['-I/usr/include/SDL', '-std=c99'],
+        LIBS=['GL', 'GLU', 'SDL', 'lua'])
 

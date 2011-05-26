@@ -51,6 +51,52 @@ static void prepare_table()
     lua_setfield(L, LUA_GLOBALSINDEX, "bar"); // table bar
 }
 
+static void trace_stack(lua_State* ls)
+{
+    const int stackSz = lua_gettop(ls);
+    int i = 1;
+    for (; i<=stackSz; ++i) {
+        TRACE("stack[%d]=[%s]", i, lua_typename(ls, lua_type(ls, i)));
+    }
+}
+
+static int print_table__(lua_State* ls, const int tableIndex)
+{
+    if (!lua_istable(ls, tableIndex)) {
+        TRACE("not a table");
+        return 0;
+    }
+    TRACE("printing table... tableIndex=%d top=%d", tableIndex, lua_gettop(ls));
+
+    lua_pushnil(ls);
+    trace_stack(ls);
+    while (lua_next(ls, tableIndex) != 0) {
+        /*TRACE("[%s]-[%s]",*/
+                /*lua_typename(ls, lua_type(ls, -2)),*/
+                /*lua_typename(ls, lua_type(ls, -1)));*/
+        const char* name = "";
+        if (lua_isstring(ls, tableIndex +1) && !lua_isnumber(ls, tableIndex + 1)) {
+            name = lua_tostring(ls, tableIndex + 1);
+        }
+        if (lua_isnumber(ls, tableIndex + 2)) {
+            TRACE("[%s]=[%d]", name, lua_tonumber(ls, tableIndex + 2));
+        } else if (lua_isstring(ls, tableIndex + 2)) {
+            TRACE("[%s]=[%s]", name, lua_tostring(ls, tableIndex + 2));
+        } else if (lua_istable(ls, tableIndex + 2)) {
+            TRACE("[%s]=[table]", name);
+            print_table__(ls, tableIndex + 2);
+        }
+        lua_pop(ls, 1);
+    }
+    return 0;
+}
+
+
+static int print_table(lua_State* ls)
+{
+    return print_table__(ls, 1);
+}
+
 int main(int ac, char* av[])
 {
     if (ac != 2) {
@@ -62,6 +108,7 @@ int main(int ac, char* av[])
     
     prepare_table();
 
+    lua_register(L, "printTable", print_table);
     int s = luaL_loadfile(L, av[1]);
     report_lua_error(__FILE__, __LINE__, s);
 

@@ -5,6 +5,10 @@
 #include "basic_unit.h"
 #include "utils.h"
 
+#ifndef M_SQRT1_2
+# define M_SQRT1_2	0.70710678118654752440	/* 1/sqrt(2) */
+#endif // M_SQRT1_2
+
 
 #define VOFFSET 0.045
 /* the triangular prism what makes up the basic unit */
@@ -241,7 +245,7 @@ void appendBasicUnits(BasicUnit* tail, int count)
         currentUnit->next->prev = currentUnit;
         currentUnit->next->isOdd = (currentUnit->isOdd) ? 0 : 1;
         currentUnit = currentUnit->next;
-        TRACE("count %d odd %d", count, currentUnit->isOdd);
+        TRACE("%p prev=%p count %d odd %d", currentUnit, currentUnit->prev, count, currentUnit->isOdd);
     }
 }
 
@@ -295,7 +299,7 @@ void drawBasicUnits(BasicUnit* headUnit)
     glPopMatrix();
 }
 
-void base_unit_turn_left(BasicUnit* unit)
+void basic_unit_turn_left(BasicUnit* unit)
 {
     int rot = unit->rot;
     rot++;
@@ -305,7 +309,7 @@ void base_unit_turn_left(BasicUnit* unit)
     TRACE("rot=%d", rot);
 }
 
-void base_unit_turn_right(BasicUnit* unit)
+void basic_unit_turn_right(BasicUnit* unit)
 {
     int rot = unit->rot;
     rot--;
