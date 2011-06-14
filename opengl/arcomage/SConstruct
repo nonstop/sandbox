@@ -1,0 +1,7 @@
+headers = 'arcomage.h'
+sources = 'main.c'
+
+Program('arcomage', sources.split(),
+        CFLAGS=['-I/usr/include/SDL', '-Wall', '-Wextra', '-std=c99'],
+        LIBS=['GL', 'GLU', 'SDL', 'lua'])
+
