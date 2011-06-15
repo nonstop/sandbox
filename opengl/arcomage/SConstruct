@@ -1,7 +1,7 @@
-headers = 'arcomage.h'
-sources = 'main.c'
+headers = 'arcomage.h menu.h FreeType.h'
+sources = 'main.c menu.c FreeType.cpp'
 
 Program('arcomage', sources.split(),
         CFLAGS=['-I/usr/include/SDL', '-Wall', '-Wextra', '-std=c99'],
-        LIBS=['GL', 'GLU', 'SDL', 'lua'])
+        LIBS=['GL', 'GLU', 'SDL', 'freetype'])
 
