@@ -85,17 +85,30 @@ static void drawMesh(int width, int height)
     }
 }
 
-static void drawTower(int width, int height, int size)
+typedef struct Tower
+{
+    int height;
+    int maxHeight;
+} Tower;
+
+typedef struct Wall
+{
+    int height;
+    int maxHeight;
+} Wall;
+
+static void drawTower(int width, int height, const Tower* t, int pos)
 {
     glPushMatrix();
     const int xStep = width / 10;
     const int yStep = height / 10;
     glColor3f(0.0f, 0.0f, 1.0f);
-    const GLfloat w = 1.5 * xStep, h = 4 * yStep;
-    if (size > 0) {
-        glTranslatef((float)xStep / 2., yStep, 0.0);
+    const float k = (t->height < t->maxHeight) ? ((float)t->height)/((float)t->maxHeight) : 1.;
+    const GLfloat w = 1.5 * xStep, h = (5 * yStep) * k;
+    if (pos > 0) {
+        glTranslatef((float)xStep / 2., 3 * yStep, 0.0);
     } else {
-        glTranslatef(width - w - (float)xStep / 2., yStep, 0.0);
+        glTranslatef(width - w - (float)xStep / 2., 3 * yStep, 0.0);
     }
     glBegin(GL_QUADS);
     glVertex3f(0, h, 0);
@@ -111,18 +124,19 @@ static void drawTower(int width, int height, int size)
     glPopMatrix();
 }
 
-static void drawWall(int width, int height, int size)
+static void drawWall(int width, int height, const Wall* wall, int pos)
 {
     glPushMatrix();
     const int xStep = width / 10;
     const int yStep = height / 10;
     glColor3f(0.0f, 0.0f, 0.5f);
-    const GLfloat w = 0.5 * xStep, h = 3 * yStep;
+    const float k = (wall->height < wall->maxHeight) ? ((float)wall->height)/((float)wall->maxHeight) : 1.;
+    const GLfloat w = 0.5 * xStep, h = (5 * yStep) * k;
     float delta = (float)(3 * xStep);
-    if (size > 0) {
-        glTranslatef(delta - w, yStep, 0.0);
+    if (pos > 0) {
+        glTranslatef(delta - w, 3 * yStep, 0.0);
     } else {
-        glTranslatef(width - delta, yStep, 0.0);
+        glTranslatef(width - delta, 3 * yStep, 0.0);
     }
     glBegin(GL_QUADS);
     glVertex3f(0, h, 0);
@@ -133,6 +147,10 @@ static void drawWall(int width, int height, int size)
     glPopMatrix();
 }
 
+static void drawCards(int width, int height)
+{
+}
+
 static void drawGLScene(const Screen* screen)
 {
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -140,12 +158,14 @@ static void drawGLScene(const Screen* screen)
     glLoadIdentity();
     /*glTranslatef(0, 0, -36.3f);*/
 
+    Tower t = {110, 125};
+    Wall w = {50, 125};
     drawMesh(screen->width, screen->height);
-    drawTower(screen->width, screen->height, 1);
-    drawTower(screen->width, screen->height, -1);
-    drawWall(screen->width, screen->height, 1);
-    drawWall(screen->width, screen->height, -1);
-    /*drawTower(screen->width, screen->height, -1);*/
+    drawTower(screen->width, screen->height, &t, 1);
+    drawTower(screen->width, screen->height, &t, -1);
+    drawWall(screen->width, screen->height, &w, 1);
+    drawWall(screen->width, screen->height, &w, -1);
+    drawCards(screen->width, screen->height);
 
     menu_draw();
 
