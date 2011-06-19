@@ -18,13 +18,19 @@ static void arcomage_quit(int returnCode)
     exit(returnCode);
 }
 
-static int handleKeyPress(SDL_Surface* surface, SDL_keysym* keysym)
+static int handleKeyPress(SDL_Surface* surface, SDL_keysym* keysym, struct Scene* scene)
 {
+    if (scene_in_animation_mode(scene)) {
+        return keysym->sym == SDLK_ESCAPE;
+    }
     switch (keysym->sym) {
     case SDLK_ESCAPE:
         return 1;
     case SDLK_F1: // fullscreen mode
         SDL_WM_ToggleFullScreen(surface);
+        break;
+    case SDLK_1:
+        scene_start_animation(scene);
         break;
     default:
         break;
@@ -124,7 +130,7 @@ int main(int ac, char* av[])
                 break;
             }
             case SDL_KEYDOWN:
-                done = handleKeyPress(surface, &event.key.keysym);
+                done = handleKeyPress(surface, &event.key.keysym, scene);
                 break;
             case SDL_QUIT:
                 done = 1;
