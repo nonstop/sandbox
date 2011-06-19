@@ -5,7 +5,7 @@
 #include <SDL.h>
 
 #include "utils.h"
-#include "menu.h"
+#include "scene.h"
 
 typedef struct Screen
 {
