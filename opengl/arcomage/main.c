@@ -142,6 +142,8 @@ int main(int ac, char* av[])
 
         if (isActive) {
             drawScene(&screen, scene);
+        } else {
+            SDL_Delay(0);
         }
     }
 

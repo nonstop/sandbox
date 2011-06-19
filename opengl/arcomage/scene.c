@@ -8,12 +8,14 @@
 typedef struct Tower
 {
     int height; // in points
+    int newHeight;
     int maxHeight; // in points
 } Tower;
 
 typedef struct Wall
 {
     int height; // in points
+    int newHeight;
     int maxHeight; // in points
 } Wall;
 
@@ -58,7 +60,7 @@ static void tower_draw(const Scene* scene, const Tower* t)
 {
     const float k = (scene->maxTowerHeight - scene->minTowerHeight) / (float)t->maxHeight;
     const float y = k * t->height + scene->minTowerHeight;
-    glColor3f(0.0f, 0.0f, 1.0f);
+    glColor3f(1.0f, 0.0f, 1.0f);
     glBegin(GL_LINE_STRIP);
     glVertex3f(0, 0, 0);
     glVertex3f(0, y - scene->yStep, 0);
@@ -160,6 +162,21 @@ void scene_draw(const Scene* scene)
     glTranslatef(-scene->towerWidth + scene->xStep / 2., 0, 0);
     wall_draw(scene, &scene->ourWall);
     glPopMatrix();
+
+    int i = 1;
+    for (; i < 6; ++i) {
+        glColor3f(1.0, 1.0, 0);
+        glPushMatrix();
+        glTranslatef(1.5 * i * scene->xStep - scene->xStep * 0.125, scene->yStep * 0.25, 0);
+        glBegin(GL_LINE_STRIP);
+        glVertex3f(0, 0, 0);
+        glVertex3f(0, scene->yStep * 2.5, 0);
+        glVertex3f(scene->xStep * 1.25, scene->yStep * 2.5, 0);
+        glVertex3f(scene->xStep * 1.25, 0, 0);
+        glVertex3f(0, 0, 0);
+        glEnd();
+        glPopMatrix();
+    }
 
     /*menu_draw(scene);*/
 }
