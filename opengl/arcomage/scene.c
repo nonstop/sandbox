@@ -2,8 +2,9 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include "utils.h"
 #include "scene.h"
+#include "menu.h"
+#include "utils.h"
 
 typedef struct Tower
 {
@@ -105,7 +106,6 @@ static void mesh_draw(int width, int height)
 
 Scene* scene_new(int width, int height)
 {
-    static Scene scene = {};
     /* Enable smooth shading */
     glShadeModel(GL_SMOOTH);
     /* Set the background black */
@@ -119,14 +119,20 @@ Scene* scene_new(int width, int height)
     /* Really Nice Perspective Calculations */
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
-    scene_resize(&scene, width, height);
-    scene.ourTower.height = 100 + (rand() % 2 ? 1 : -1) * rand() % 25;
-    scene.ourTower.maxHeight = 125;
-    scene.enemyTower.height = 100 + (rand() % 2 ? 1 : -1) * rand() % 25;
-    scene.enemyTower.maxHeight = 125;
-    TRACE("ourTower %d enemyTower %d", scene.ourTower.height, scene.enemyTower.height);
+    Scene* scene = calloc(sizeof(Scene), 1);
+    scene_resize(scene, width, height);
+    scene->ourTower.height = 100 + (rand() % 2 ? 1 : -1) * rand() % 25;
+    scene->ourTower.maxHeight = 125;
+    scene->enemyTower.height = 100 + (rand() % 2 ? 1 : -1) * rand() % 25;
+    scene->enemyTower.maxHeight = 125;
+    TRACE("ourTower %d enemyTower %d", scene->ourTower.height, scene->enemyTower.height);
     menu_init();
-    return &scene;
+    return scene;
+}
+
+void scene_delete(Scene* scene)
+{
+    free(scene);
 }
 
 void scene_on_timer(Scene* scene)
