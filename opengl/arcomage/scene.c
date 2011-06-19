@@ -6,6 +6,12 @@
 #include "menu.h"
 #include "utils.h"
 
+// animationMode flags
+#define ANIMATE_OUR_TOWER 0x1
+#define ANIMATE_ENEMY_TOWER 0x2
+#define ANIMATE_OUR_WALL 0x4
+#define ANIMATE_ENEMY_WALL 0x8
+
 typedef struct Tower
 {
     int height; // in points
@@ -22,7 +28,7 @@ typedef struct Wall
 
 typedef struct Scene
 {
-    int mode;
+    int animationMode;
     int width, height;
     GLfloat xStep, yStep;
     GLfloat towerWidth, wallWidth;
@@ -135,16 +141,32 @@ void scene_delete(Scene* scene)
     free(scene);
 }
 
+static void tower_on_timer(Scene* scene, Tower* tower, int flag)
+{
+    if (tower->height < tower->newHeight) {
+        ++tower->height;
+    } else if (tower->height > tower->newHeight) {
+        --tower->height;
+    } else {
+        scene->animationMode |= ~flag;
+    }
+}
+
 void scene_on_timer(Scene* scene)
 {
-    if (!scene_in_animation_mode(scene)) {
+    if (scene->animationMode == 0) {
         return;
     }
-    if (scene->ourTower.height < scene->ourTower.maxHeight) {
-        ++scene->ourTower.height;
+    if (scene->animationMode & ANIMATE_OUR_TOWER) {
+        tower_on_timer(scene, &scene->ourTower, ANIMATE_OUR_TOWER);
+    } else if (scene->animationMode & ANIMATE_ENEMY_TOWER) {
+        tower_on_timer(scene, &scene->enemyTower, ANIMATE_ENEMY_TOWER);
+    } else if (scene->animationMode & ANIMATE_OUR_WALL) {
+        TRACE("not ready");
+    } else if (scene->animationMode & ANIMATE_ENEMY_WALL) {
+        TRACE("not ready");
     } else {
-        scene->mode = 0;
-        TRACE("stop animation");
+        TRACE("unknown flags: %x", scene->animationMode);
     }
 }
 
@@ -189,11 +211,25 @@ void scene_draw(const Scene* scene)
 
 int scene_in_animation_mode(const Scene* scene)
 {
-    return scene->mode;
+    return scene->animationMode != 0;
 }
 
-void scene_start_animation(Scene* scene)
+/*void scene_start_animation(Scene* scene)*/
+/*{*/
+    /*TRACE("start animation");*/
+    /*scene->mode = 1;*/
+/*}*/
+
+void scene_animate_our_tower(struct Scene* scene, int newHeight)
 {
-    TRACE("start animation");
-    scene->mode = 1;
+    TRACE("%s newHeight=%d", __FUNCTION__, newHeight);
+    scene->animationMode |= ANIMATE_OUR_TOWER;
+    scene->ourTower.newHeight = newHeight;
+}
+
+void scene_animate_enemy_tower(struct Scene* scene, int newHeight)
+{
+    TRACE("%s newHeight=%d", __FUNCTION__, newHeight);
+    scene->animationMode |= ANIMATE_ENEMY_TOWER;
+    scene->enemyTower.newHeight = newHeight;
 }

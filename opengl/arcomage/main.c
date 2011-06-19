@@ -20,6 +20,7 @@ static void arcomage_quit(int returnCode)
 
 static int handleKeyPress(SDL_Surface* surface, SDL_keysym* keysym, struct Scene* scene)
 {
+    TRACE("key=%d", keysym->sym);
     if (scene_in_animation_mode(scene)) {
         return keysym->sym == SDLK_ESCAPE;
     }
@@ -30,7 +31,10 @@ static int handleKeyPress(SDL_Surface* surface, SDL_keysym* keysym, struct Scene
         SDL_WM_ToggleFullScreen(surface);
         break;
     case SDLK_1:
-        scene_start_animation(scene);
+        scene_animate_our_tower(scene, 125);
+        break;
+    case SDLK_2:
+        scene_animate_enemy_tower(scene, 125);
         break;
     default:
         break;
