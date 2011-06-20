@@ -31,12 +31,22 @@ static int handleKeyPress(SDL_Surface* surface, SDL_keysym* keysym, struct Scene
         SDL_WM_ToggleFullScreen(surface);
         break;
     case SDLK_1:
-        scene_animate_our_tower(scene, 125);
-        scene_animate_our_wall(scene, 125);
+        if (keysym->mod & KMOD_SHIFT) {
+            scene_animate_our_tower(scene, 100);
+            scene_animate_our_wall(scene, 90);
+        } else {
+            scene_animate_our_tower(scene, 125);
+            scene_animate_our_wall(scene, 125);
+        }
         break;
     case SDLK_2:
-        scene_animate_enemy_tower(scene, 125);
-        scene_animate_enemy_wall(scene, 125);
+        if (keysym->mod & KMOD_SHIFT) {
+            scene_animate_enemy_tower(scene, 110);
+            scene_animate_enemy_wall(scene, 85);
+        } else {
+            scene_animate_enemy_tower(scene, 125);
+            scene_animate_enemy_wall(scene, 125);
+        }
         break;
     default:
         break;
