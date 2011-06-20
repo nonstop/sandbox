@@ -11,6 +11,8 @@ void scene_start_animation(struct Scene* scene);
 
 void scene_animate_our_tower(struct Scene* scene, int newHeight);
 void scene_animate_enemy_tower(struct Scene* scene, int newHeight);
+void scene_animate_our_wall(struct Scene* scene, int newHeight);
+void scene_animate_enemy_wall(struct Scene* scene, int newHeight);
 
 #endif /* ARCOMAGE_SCENE_H */
 

@@ -78,13 +78,15 @@ static void tower_draw(const Scene* scene, const Tower* t)
     glEnd();
 }
 
-static void wall_draw(const Scene* scene, const Wall* wall)
+static void wall_draw(const Scene* scene, const Wall* w)
 {
+    const float k = (scene->maxWallHeight - scene->minWallHeight) / (float)w->maxHeight;
+    const float y = k * w->height + scene->minWallHeight;
     glColor3f(0.0f, 0.0f, 0.5f);
     glBegin(GL_LINE_STRIP);
     glVertex3f(0, 0, 0);
-    glVertex3f(0, scene->maxWallHeight, 0);
-    glVertex3f(scene->wallWidth, scene->maxWallHeight, 0);
+    glVertex3f(0, y, 0);
+    glVertex3f(scene->wallWidth, y, 0);
     glVertex3f(scene->wallWidth, 0, 0);
     glVertex3f(0, 0, 0);
     glEnd();
@@ -131,7 +133,12 @@ Scene* scene_new(int width, int height)
     scene->ourTower.maxHeight = 125;
     scene->enemyTower.height = 100 + (rand() % 2 ? 1 : -1) * rand() % 25;
     scene->enemyTower.maxHeight = 125;
-    TRACE("ourTower %d enemyTower %d", scene->ourTower.height, scene->enemyTower.height);
+    scene->ourWall.height = 100 + (rand() % 2 ? 1 : -1) * rand() % 25;
+    scene->ourWall.maxHeight = 125;
+    scene->enemyWall.height = 100 + (rand() % 2 ? 1 : -1) * rand() % 25;
+    scene->enemyWall.maxHeight = 125;
+    TRACE("our %d %d enemy %d %d", scene->ourTower.height, scene->ourWall.height,
+            scene->enemyTower.height, scene->enemyWall.height);
     menu_init();
     return scene;
 }
@@ -148,7 +155,18 @@ static void tower_on_timer(Scene* scene, Tower* tower, int flag)
     } else if (tower->height > tower->newHeight) {
         --tower->height;
     } else {
-        scene->animationMode |= ~flag;
+        scene->animationMode &= ~flag;
+    }
+}
+
+static void wall_on_timer(Scene* scene, Wall* wall, int flag)
+{
+    if (wall->height < wall->newHeight) {
+        ++wall->height;
+    } else if (wall->height > wall->newHeight) {
+        --wall->height;
+    } else {
+        scene->animationMode &= ~flag;
     }
 }
 
@@ -159,14 +177,15 @@ void scene_on_timer(Scene* scene)
     }
     if (scene->animationMode & ANIMATE_OUR_TOWER) {
         tower_on_timer(scene, &scene->ourTower, ANIMATE_OUR_TOWER);
-    } else if (scene->animationMode & ANIMATE_ENEMY_TOWER) {
+    }
+    if (scene->animationMode & ANIMATE_ENEMY_TOWER) {
         tower_on_timer(scene, &scene->enemyTower, ANIMATE_ENEMY_TOWER);
-    } else if (scene->animationMode & ANIMATE_OUR_WALL) {
-        TRACE("not ready");
-    } else if (scene->animationMode & ANIMATE_ENEMY_WALL) {
-        TRACE("not ready");
-    } else {
-        TRACE("unknown flags: %x", scene->animationMode);
+    }
+    if (scene->animationMode & ANIMATE_OUR_WALL) {
+        wall_on_timer(scene, &scene->ourWall, ANIMATE_OUR_WALL);
+    }
+    if (scene->animationMode & ANIMATE_ENEMY_WALL) {
+        wall_on_timer(scene, &scene->enemyWall, ANIMATE_ENEMY_WALL);
     }
 }
 
@@ -188,7 +207,7 @@ void scene_draw(const Scene* scene)
     glTranslatef(scene->width - delta, 3.0 * scene->yStep, 0.0);
     tower_draw(scene, &scene->enemyTower);
     glTranslatef(-scene->towerWidth + scene->xStep / 2., 0, 0);
-    wall_draw(scene, &scene->ourWall);
+    wall_draw(scene, &scene->enemyWall);
     glPopMatrix();
 
     int i = 1;
@@ -232,4 +251,18 @@ void scene_animate_enemy_tower(struct Scene* scene, int newHeight)
     TRACE("%s newHeight=%d", __FUNCTION__, newHeight);
     scene->animationMode |= ANIMATE_ENEMY_TOWER;
     scene->enemyTower.newHeight = newHeight;
+}
+
+void scene_animate_our_wall(struct Scene* scene, int newHeight)
+{
+    TRACE("%s newHeight=%d", __FUNCTION__, newHeight);
+    scene->animationMode |= ANIMATE_OUR_WALL;
+    scene->ourWall.newHeight = newHeight;
+}
+
+void scene_animate_enemy_wall(struct Scene* scene, int newHeight)
+{
+    TRACE("%s newHeight=%d", __FUNCTION__, newHeight);
+    scene->animationMode |= ANIMATE_ENEMY_WALL;
+    scene->enemyWall.newHeight = newHeight;
 }

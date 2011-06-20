@@ -32,9 +32,11 @@ static int handleKeyPress(SDL_Surface* surface, SDL_keysym* keysym, struct Scene
         break;
     case SDLK_1:
         scene_animate_our_tower(scene, 125);
+        scene_animate_our_wall(scene, 125);
         break;
     case SDLK_2:
         scene_animate_enemy_tower(scene, 125);
+        scene_animate_enemy_wall(scene, 125);
         break;
     default:
         break;
