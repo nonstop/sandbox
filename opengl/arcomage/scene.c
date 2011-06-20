@@ -156,11 +156,17 @@ void scene_delete(Scene* scene)
 static void tower_on_timer(Scene* scene, Tower* tower, int flag)
 {
     if (tower->height < tower->newHeight) {
-        ++tower->height;
+        tower->height += 2;
+        if (tower->height >= tower->newHeight) {
+            tower->height = tower->newHeight;
+            scene->animationMode &= ~flag;
+        }
     } else if (tower->height > tower->newHeight) {
-        --tower->height;
-    } else {
-        scene->animationMode &= ~flag;
+        tower->height -= 2;
+        if (tower->height <= tower->newHeight) {
+            tower->height = tower->newHeight;
+            scene->animationMode &= ~flag;
+        }
     }
 }
 
