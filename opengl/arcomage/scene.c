@@ -47,7 +47,7 @@ void scene_resize(Scene* scene, int width, int height)
     scene->towerWidth = 1.5 * scene->xStep;
     scene->wallWidth = 0.5 * scene->xStep;
     scene->minTowerHeight = scene->yStep + 0.2 * scene->yStep;
-    scene->maxTowerHeight = 5.0 * scene->yStep;
+    scene->maxTowerHeight = 6.0 * scene->yStep;
     scene->minWallHeight = 0.1;
     scene->maxWallHeight = 5.0 * scene->yStep;
 
@@ -67,12 +67,17 @@ static void tower_draw(const Scene* scene, const Tower* t)
 {
     const float k = (scene->maxTowerHeight - scene->minTowerHeight) / (float)t->maxHeight;
     const float y = k * t->height + scene->minTowerHeight;
+    const float roofHeight = 2.0 * scene->yStep;
     glColor3f(1.0f, 0.0f, 1.0f);
     glBegin(GL_LINE_STRIP);
     glVertex3f(0, 0, 0);
-    glVertex3f(0, y - scene->yStep, 0);
+    glVertex3f(0, y - roofHeight, 0);
+    glVertex3f(0 - scene->xStep * 0.25, y - roofHeight, 0);
+    glVertex3f(0 + scene->xStep * 0.25, y - roofHeight * 0.66, 0);
     glVertex3f(scene->towerWidth / 2.0, y, 0);
-    glVertex3f(scene->towerWidth, y - scene->yStep, 0);
+    glVertex3f(scene->towerWidth - scene->xStep * 0.25, y - roofHeight * 0.66, 0);
+    glVertex3f(scene->towerWidth + scene->xStep * 0.25, y - roofHeight, 0);
+    glVertex3f(scene->towerWidth, y - roofHeight, 0);
     glVertex3f(scene->towerWidth, 0, 0);
     glVertex3f(0, 0, 0);
     glEnd();
@@ -206,7 +211,7 @@ void scene_draw(const Scene* scene)
     glPushMatrix();
     glTranslatef(scene->width - delta, 3.0 * scene->yStep, 0.0);
     tower_draw(scene, &scene->enemyTower);
-    glTranslatef(-scene->towerWidth + scene->xStep / 2., 0, 0);
+    glTranslatef(-scene->xStep, 0, 0);
     wall_draw(scene, &scene->enemyWall);
     glPopMatrix();
 
