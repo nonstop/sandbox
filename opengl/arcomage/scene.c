@@ -167,6 +167,8 @@ static void tower_on_timer(Scene* scene, Tower* tower, int flag)
             tower->height = tower->newHeight;
             scene->animationMode &= ~flag;
         }
+    } else {
+        scene->animationMode &= ~flag;
     }
 }
 
@@ -252,28 +254,28 @@ int scene_in_animation_mode(const Scene* scene)
 
 void scene_animate_our_tower(struct Scene* scene, int newHeight)
 {
-    TRACE("%s newHeight=%d", __FUNCTION__, newHeight);
     scene->animationMode |= ANIMATE_OUR_TOWER;
     scene->ourTower.newHeight = newHeight;
+    TRACE("%s newHeight=%d animationMode=%x", __FUNCTION__, newHeight, scene->animationMode);
 }
 
 void scene_animate_enemy_tower(struct Scene* scene, int newHeight)
 {
-    TRACE("%s newHeight=%d", __FUNCTION__, newHeight);
     scene->animationMode |= ANIMATE_ENEMY_TOWER;
     scene->enemyTower.newHeight = newHeight;
+    TRACE("%s newHeight=%d animationMode=%x", __FUNCTION__, newHeight, scene->animationMode);
 }
 
 void scene_animate_our_wall(struct Scene* scene, int newHeight)
 {
-    TRACE("%s newHeight=%d", __FUNCTION__, newHeight);
     scene->animationMode |= ANIMATE_OUR_WALL;
     scene->ourWall.newHeight = newHeight;
+    TRACE("%s newHeight=%d animationMode=%x", __FUNCTION__, newHeight, scene->animationMode);
 }
 
 void scene_animate_enemy_wall(struct Scene* scene, int newHeight)
 {
-    TRACE("%s newHeight=%d", __FUNCTION__, newHeight);
     scene->animationMode |= ANIMATE_ENEMY_WALL;
     scene->enemyWall.newHeight = newHeight;
+    TRACE("%s newHeight=%d animationMode=%x", __FUNCTION__, newHeight, scene->animationMode);
 }
