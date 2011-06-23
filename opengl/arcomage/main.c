@@ -5,6 +5,7 @@
 #include <SDL.h>
 
 #include "utils.h"
+#include "game.h"
 #include "scene.h"
 
 typedef struct Screen
@@ -30,24 +31,14 @@ static int handleKeyPress(SDL_Surface* surface, SDL_keysym* keysym, struct Scene
     case SDLK_F1: // fullscreen mode
         SDL_WM_ToggleFullScreen(surface);
         break;
-    case SDLK_1:
-        if (keysym->mod & KMOD_SHIFT) {
-            scene_animate_our_tower(scene, 100);
-            scene_animate_our_wall(scene, 90);
-        } else {
-            scene_animate_our_tower(scene, 125);
-            scene_animate_our_wall(scene, 125);
-        }
+    case SDLK_1: {
+        const int sign = (keysym->mod & KMOD_SHIFT) ? -1 : 1;
+        CardAction our = {15 * sign, 10 * sign};
+        CardAction enemy = {10 * sign, 5 * sign};
+        game_apply_action(&our, &enemy);
+        scene_animate_our_tower(scene, game_our_tower_height());
         break;
-    case SDLK_2:
-        if (keysym->mod & KMOD_SHIFT) {
-            scene_animate_enemy_tower(scene, 110);
-            scene_animate_enemy_wall(scene, 85);
-        } else {
-            scene_animate_enemy_tower(scene, 125);
-            scene_animate_enemy_wall(scene, 125);
-        }
-        break;
+    }
     default:
         break;
     }

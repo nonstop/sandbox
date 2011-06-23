@@ -1,5 +1,5 @@
-headers = 'arcomage.h menu.h scene.h FreeType.h'
-sources = 'main.c menu.c scene.c FreeType.cpp'
+headers = 'arcomage.h menu.h scene.h game.h FreeType.h'
+sources = 'main.c menu.c scene.c game.c FreeType.cpp'
 
 Program('arcomage', sources.split(),
         CFLAGS=['-I/usr/include/SDL', '-Wall', '-Wextra', '-std=c99'],
