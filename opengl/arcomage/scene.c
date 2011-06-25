@@ -135,14 +135,17 @@ void scene_init(int width, int height)
 
     memset(&scene, sizeof(struct Scene), 0);
     scene_resize(width, height);
-    scene.ourTower.height = game_our_tower_height();
-    scene.ourTower.maxHeight = 125;
-    scene.enemyTower.height = game_enemy_tower_height();
-    scene.enemyTower.maxHeight = 125;
-    scene.ourWall.height = game_our_wall_height();
-    scene.ourWall.maxHeight = 125;
-    scene.enemyWall.height = game_enemy_wall_height();
-    scene.enemyWall.maxHeight = 125;
+    const Stat* our = game_stat_our();
+    scene.ourTower.height = our->tower;
+    scene.ourTower.maxHeight = our->maxTower;
+    scene.ourWall.height = our->wall;
+    scene.ourWall.maxHeight = our->maxWall;
+
+    const Stat* enemy = game_stat_enemy();
+    scene.enemyTower.height = enemy->tower;
+    scene.enemyTower.maxHeight = enemy->maxTower;
+    scene.enemyWall.height = enemy->wall;
+    scene.enemyWall.maxHeight = enemy->maxWall;
     TRACE("our %d %d enemy %d %d", scene.ourTower.height, scene.ourWall.height,
             scene.enemyTower.height, scene.enemyWall.height);
     menu_init();

@@ -4,11 +4,6 @@
 #include "scene.h"
 #include "utils.h"
 
-typedef struct Stat
-{
-    int tower, wall;
-} Stat;
-
 struct Game
 {
     Stat our, enemy;
@@ -20,34 +15,30 @@ typedef struct Card
 } Card;
 Card cards[5];
 
-int game_our_tower_height()
+const Stat* game_stat_our()
 {
-    return game.our.tower;
+    return &game.our;
 }
 
-int game_enemy_tower_height()
+const Stat* game_stat_enemy()
 {
-    return game.enemy.tower;
-}
-
-int game_our_wall_height()
-{
-    return game.our.wall;
-}
-
-int game_enemy_wall_height()
-{
-    return game.enemy.wall;
+    return &game.enemy;
 }
 
 static void game_apply_action__(const CardAction* ca, int target, Stat* st)
 {
     if (ca->tower) {
         st->tower += ca->tower;
+        if (st->tower > st->maxTower) {
+            st->tower = st->maxTower;
+        }
         scene_animate_tower(target, st->tower);
     }
     if (ca->wall) {
         st->wall += ca->wall;
+        if (st->wall > st->maxWall) {
+            st->wall = st->maxWall;
+        }
         scene_animate_wall(target, st->wall);
     }
     TRACE("%s %d/%d", (target ? "enemy" : "our"), st->tower, st->wall);
@@ -62,7 +53,9 @@ void game_apply_action(int cardIdx)
 void game_init_demo()
 {
     game.our.tower = 100 + (rand() % 2 ? 1 : -1) * rand() % 25;
+    game.our.maxTower = 125;
     game.our.wall = 100 + (rand() % 2 ? 1 : -1) * rand() % 25;
+    game.our.maxWall = 125;
 
     game.enemy = game.our;
 

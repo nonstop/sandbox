@@ -6,10 +6,14 @@ typedef struct CardAction
     int tower, wall;
 } CardAction;
 
-int game_our_tower_height();
-int game_enemy_tower_height();
-int game_our_wall_height();
-int game_enemy_wall_height();
+typedef struct Stat
+{
+    int tower, wall;
+    int maxTower, maxWall;
+} Stat;
+
+const Stat* game_stat_our();
+const Stat* game_stat_enemy();
 
 void game_apply_action(int cardIdx);
     
