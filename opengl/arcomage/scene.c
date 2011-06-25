@@ -246,11 +246,11 @@ void scene_animate_tower(int target, int newHeight)
     if (target) {
         scene.animationMode |= ANIMATE_ENEMY_TOWER;
         scene.enemyTower.newHeight = newHeight;
-        TRACE("%s newHeight=%d animationMode=%x", __FUNCTION__, newHeight, scene.animationMode);
+//        TRACE("%s newHeight=%d animationMode=%x", __FUNCTION__, newHeight, scene.animationMode);
     } else {
         scene.animationMode |= ANIMATE_OUR_TOWER;
         scene.ourTower.newHeight = newHeight;
-        TRACE("%s newHeight=%d animationMode=%x", __FUNCTION__, newHeight, scene.animationMode);
+//        TRACE("%s newHeight=%d animationMode=%x", __FUNCTION__, newHeight, scene.animationMode);
     }
 
 }
@@ -260,10 +260,10 @@ void scene_animate_wall(int target, int newHeight)
     if (target) {
         scene.animationMode |= ANIMATE_ENEMY_WALL;
         scene.enemyWall.newHeight = newHeight;
-        TRACE("%s newHeight=%d animationMode=%x", __FUNCTION__, newHeight, scene.animationMode);
+//        TRACE("%s newHeight=%d animationMode=%x", __FUNCTION__, newHeight, scene.animationMode);
     } else {
         scene.animationMode |= ANIMATE_OUR_WALL;
         scene.ourWall.newHeight = newHeight;
-        TRACE("%s newHeight=%d animationMode=%x", __FUNCTION__, newHeight, scene.animationMode);
+//        TRACE("%s newHeight=%d animationMode=%x", __FUNCTION__, newHeight, scene.animationMode);
     }
 }

@@ -11,7 +11,7 @@ int game_enemy_tower_height();
 int game_our_wall_height();
 int game_enemy_wall_height();
 
-void game_apply_action(const CardAction* our, const CardAction* enemy);
+void game_apply_action(int cardIdx);
     
 void game_init_demo();
 

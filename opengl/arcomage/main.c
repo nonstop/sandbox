@@ -31,11 +31,12 @@ static int handleKeyPress(SDL_Surface* surface, SDL_keysym* keysym)
     case SDLK_F1: // fullscreen mode
         SDL_WM_ToggleFullScreen(surface);
         break;
-    case SDLK_1: {
-        const int sign = (keysym->mod & KMOD_SHIFT) ? -1 : 1;
-        CardAction our = {15 * sign, 10 * sign};
-        CardAction enemy = {10 * sign, 5 * sign};
-        game_apply_action(&our, &enemy);
+    case SDLK_1:
+    case SDLK_2:
+    case SDLK_3:
+    case SDLK_4:
+    case SDLK_5: {
+        game_apply_action(keysym->sym - SDLK_1);
         break;
     }
     default:
