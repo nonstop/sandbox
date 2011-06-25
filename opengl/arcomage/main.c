@@ -19,10 +19,10 @@ static void arcomage_quit(int returnCode)
     exit(returnCode);
 }
 
-static int handleKeyPress(SDL_Surface* surface, SDL_keysym* keysym, struct Scene* scene)
+static int handleKeyPress(SDL_Surface* surface, SDL_keysym* keysym)
 {
     TRACE("key=%d", keysym->sym);
-    if (scene_in_animation_mode(scene)) {
+    if (scene_in_animation_mode()) {
         return keysym->sym == SDLK_ESCAPE;
     }
     switch (keysym->sym) {
@@ -36,7 +36,6 @@ static int handleKeyPress(SDL_Surface* surface, SDL_keysym* keysym, struct Scene
         CardAction our = {15 * sign, 10 * sign};
         CardAction enemy = {10 * sign, 5 * sign};
         game_apply_action(&our, &enemy);
-        scene_animate_our_tower(scene, game_our_tower_height());
         break;
     }
     default:
@@ -62,9 +61,9 @@ Uint32 arcomage_timer(Uint32 interval, void *param)
     return(interval);
 }
 
-static void drawScene(const Screen* screen, struct Scene* scene)
+static void drawScene()
 {
-    scene_draw(scene);
+    scene_draw();
     SDL_GL_SwapBuffers();
 }
 
@@ -105,14 +104,15 @@ int main(int ac, char* av[])
         arcomage_quit(1);
     }
 
-    struct Scene* scene = scene_new(screen.width, screen.height);
-
     int isActive = 1;
     int done = 0;
     SDL_TimerID timer = SDL_AddTimer(100, arcomage_timer, NULL);
     if (!timer) {
         TRACE("%s", SDL_GetError());
     }
+    game_init_demo();
+    scene_init(screen.width, screen.height);
+
     SDL_Event event = {};
     while (!done) {
         while (SDL_PollEvent(&event)) {
@@ -130,14 +130,14 @@ int main(int ac, char* av[])
                     fprintf(stderr, "Could not get a surface after resize: %s\n", SDL_GetError());
                     arcomage_quit(1);
                 }
-                scene_resize(scene, screen.width, screen.height);
+                scene_resize(screen.width, screen.height);
                 break;
             case SDL_USEREVENT: {
-                scene_on_timer(scene);
+                scene_on_timer();
                 break;
             }
             case SDL_KEYDOWN:
-                done = handleKeyPress(surface, &event.key.keysym, scene);
+                done = handleKeyPress(surface, &event.key.keysym);
                 break;
             case SDL_QUIT:
                 done = 1;
@@ -148,7 +148,7 @@ int main(int ac, char* av[])
         }
 
         if (isActive) {
-            drawScene(&screen, scene);
+            drawScene();
         } else {
             SDL_Delay(0);
         }
