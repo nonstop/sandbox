@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdlib.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 
@@ -13,8 +14,12 @@
 #define ANIMATE_OUR_WALL 0x4
 #define ANIMATE_ENEMY_WALL 0x8
 
+static const GLfloat towerColor[] = {1.0, 0.0, 1.0};
+
 typedef struct Tower
 {
+    GLfloat color[3];
+    int step, steps;
     int height; // in points
     int newHeight;
     int maxHeight; // in points
@@ -69,7 +74,9 @@ static void tower_draw(const Tower* t)
     const float k = (scene.maxTowerHeight - scene.minTowerHeight) / (float)t->maxHeight;
     const float y = k * t->height + scene.minTowerHeight;
     const float roofHeight = 2.0 * scene.yStep;
-    glColor3f(1.0f, 0.0f, 1.0f);
+    
+    glColor3fv(t->color);
+
     glBegin(GL_LINE_STRIP);
     glVertex3f(0, 0, 0);
     glVertex3f(0, y - roofHeight, 0);
@@ -86,9 +93,11 @@ static void tower_draw(const Tower* t)
 
 static void wall_draw(const Wall* w)
 {
+    static GLfloat wallColor[] = {0.0, 0.0, 0.5};
+
     const float k = (scene.maxWallHeight - scene.minWallHeight) / (float)w->maxHeight;
     const float y = k * w->height + scene.minWallHeight;
-    glColor3f(0.0f, 0.0f, 0.5f);
+    glColor3fv(wallColor);
     glBegin(GL_LINE_STRIP);
     glVertex3f(0, 0, 0);
     glVertex3f(0, y, 0);
@@ -138,12 +147,14 @@ void scene_init(int width, int height)
     const Stat* our = game_stat_our();
     scene.ourTower.height = our->tower;
     scene.ourTower.maxHeight = our->maxTower;
+    memcpy(scene.ourTower.color, towerColor, sizeof(towerColor));
     scene.ourWall.height = our->wall;
     scene.ourWall.maxHeight = our->maxWall;
 
     const Stat* enemy = game_stat_enemy();
     scene.enemyTower.height = enemy->tower;
     scene.enemyTower.maxHeight = enemy->maxTower;
+    memcpy(scene.enemyTower.color, towerColor, sizeof(towerColor));
     scene.enemyWall.height = enemy->wall;
     scene.enemyWall.maxHeight = enemy->maxWall;
     TRACE("our %d %d enemy %d %d", scene.ourTower.height, scene.ourWall.height,
@@ -151,21 +162,47 @@ void scene_init(int width, int height)
     menu_init();
 }
 
-static void tower_on_timer(Tower* tower, int flag)
+static void tower_reset(Tower* t)
 {
-    if (tower->height < tower->newHeight) {
-        tower->height += 2;
-        if (tower->height >= tower->newHeight) {
-            tower->height = tower->newHeight;
+    t->height = t->newHeight;
+    t->step = 0;
+    t->steps = 0;
+    memcpy(&t->color, towerColor, sizeof(towerColor));
+}
+
+static void change_color_by_step(GLfloat* color, const GLfloat* defaultColor, int step, int steps)
+{
+    static const GLfloat intermediateColor[] = {1.0, 1.0, 1.0};
+    const int sign = (step > (float)steps / 2.0 ? 1 : -1);
+    const float k = 2.0 * (float)step / (float)steps;
+    int i = 0;
+    for (; i < 3; ++i) {
+        color[i] += sign * (defaultColor[i] - intermediateColor[i]) * k;
+    }
+}
+
+static void tower_on_timer(Tower* t, int flag)
+{
+    TRACE("height=%d newHeight=%d step=%d steps=%d",
+            t->height, t->newHeight, t->step, t->steps);
+    if (t->height < t->newHeight) {
+        ++t->step;
+        t->height += 2;
+        change_color_by_step(t->color, towerColor, t->step, t->steps);
+        if (t->height >= t->newHeight) {
+            tower_reset(t);
             scene.animationMode &= ~flag;
         }
-    } else if (tower->height > tower->newHeight) {
-        tower->height -= 2;
-        if (tower->height <= tower->newHeight) {
-            tower->height = tower->newHeight;
+    } else if (t->height > t->newHeight) {
+        ++t->step;
+        t->height -= 2;
+        change_color_by_step(t->color, towerColor, t->step, t->steps);
+        if (t->height <= t->newHeight) {
+            tower_reset(t);
             scene.animationMode &= ~flag;
         }
     } else {
+        tower_reset(t);
         scene.animationMode &= ~flag;
     }
 }
@@ -244,18 +281,25 @@ int scene_in_animation_mode()
     return scene.animationMode != 0;
 }
 
+static void scene_animate_tower__(Tower* t, int newHeight, int flag)
+{
+    scene.animationMode |= flag;
+    t->step = 0;
+    const int delta = abs(t->height - newHeight);
+    t->steps = delta / 2 + delta % 2;
+    TRACE("height=%d newHeight=%d abs=%d steps=%d", t->height, newHeight, delta, t->steps);
+    t->newHeight = newHeight;
+    TRACE("%s newHeight=%d animationMode=%x steps=%d", __FUNCTION__,
+            newHeight, scene.animationMode, scene.enemyTower.steps);
+}
+
 void scene_animate_tower(int target, int newHeight)
 {
     if (target) {
-        scene.animationMode |= ANIMATE_ENEMY_TOWER;
-        scene.enemyTower.newHeight = newHeight;
-//        TRACE("%s newHeight=%d animationMode=%x", __FUNCTION__, newHeight, scene.animationMode);
+        scene_animate_tower__(&scene.enemyTower, newHeight, ANIMATE_ENEMY_TOWER);
     } else {
-        scene.animationMode |= ANIMATE_OUR_TOWER;
-        scene.ourTower.newHeight = newHeight;
-//        TRACE("%s newHeight=%d animationMode=%x", __FUNCTION__, newHeight, scene.animationMode);
+        scene_animate_tower__(&scene.ourTower, newHeight, ANIMATE_OUR_TOWER);
     }
-
 }
 
 void scene_animate_wall(int target, int newHeight)
