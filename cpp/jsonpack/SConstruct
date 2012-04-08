@@ -1,0 +1,5 @@
+headers = 'packer.h json_spirit.h'
+sources = 'main.cc packer.cc'
+
+Program('testpack', sources.split(), LIBS=['boost_date_time'])
+
