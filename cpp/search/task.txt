@@ -1,0 +1,21 @@
+Find lenght of the minimal substring containing k elements c.
+The algorithm must complete in O(n) time. The program is started with 2 arguments:
+character c and number k. It reads stdin and for each row returns answer.
+Row lenght is limited to 1024 bytes;
+EOF - end of work.
+
+Найти минимальную длину подстроки содержащей k элементов c в массиве.
+Сложность алгоритма не больше O(n).
+Программа получает параметром символ и длину подстроки и читает строки из stdin.
+На каждую строку выдает ответ.
+Строка не длиннее 1024 байт.
+EOF - конец ввода.
+
+
+C       : search.c
+C++     : ?
+Go      : ?
+Scheme  : ?
+Python  : ?
+Haskell : ?
+Erlang  : ?
