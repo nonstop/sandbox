@@ -1,5 +1,8 @@
-headers = 'packer.h json_spirit.h'
-sources = 'main.cc packer.cc'
+headers = 'json_packer.h json_pack_types.h json_spirit.h details.hpp'
+sources = 'main.cc json_spirit.cc json_pack_types.cc'
 
-Program('testpack', sources.split(), LIBS=['boost_date_time'])
+env = Environment()
+env.Append(CCFLAGS="-std=c++0x -Wall")
+env['CC'] = "/usr/bin/clang++"
+env.Program('jsonpa', sources.split(), LIBS=[])
 
