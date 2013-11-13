@@ -8,11 +8,12 @@
 #include "desc.h"
 #include "err.h"
 
-std::list<BaseDesc*> descs;
+std::map< std::string, std::list<BaseDesc*> > descs
+
 void initDescs()
 {
-    descs.push_back(new Desc<Foo, ResultFoo>(parse_foo, proc_foo, display_foo));
-    descs.push_back(new Desc<Bar, ResultBar>(parse_bar, proc_bar, display_bar));
+    descs["FOO"].push_back(new Desc<Foo, ResultFoo>(parse_foo, proc_foo, display_foo));
+    descs["BAR"].push_back(new Desc<Bar, ResultBar>(parse_bar, proc_bar, display_bar));
 }
 
 std::string textTermRequest(const std::string& str)

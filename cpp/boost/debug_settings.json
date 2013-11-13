@@ -1,0 +1,9 @@
+{
+    "debug":
+    {
+        "filename": "debug.log",
+        "modules": ["Finance", "Admin", "HR"],
+        "level": 2
+    }
+}
+
