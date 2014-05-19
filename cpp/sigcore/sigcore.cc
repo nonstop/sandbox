@@ -97,7 +97,8 @@ void term3(int signo)
                     }
                 }
                 setupCore();
-                raise(signo);
+                //abort();
+                raise(SIGABRT);
                 return;
             }
     }
