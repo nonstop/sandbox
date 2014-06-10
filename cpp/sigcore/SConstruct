@@ -1,0 +1,8 @@
+headers = ''
+sources = 'sigcore.cc'
+
+env = Environment()
+env.Append(CCFLAGS="-std=c++0x -g -Wall")
+env['CC'] = "/usr/bin/clang++"
+env.Program('sigcore', sources.split(), LIBS=[])
+

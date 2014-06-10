@@ -1,4 +1,5 @@
 sources = 'main.cc foo.h foo.cc bar.h bar.cc desc.h err.cc err.h'
 
-Program('ppd', sources.split())
+Program('ppd', sources.split(),
+        CFLAGS=['-I/usr/local/boost-1_49_0/include', '-Wall'])
 
