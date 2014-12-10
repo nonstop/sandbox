@@ -56,6 +56,7 @@ struct TypeFromList<T, T, Rest...>
 struct BasicDestr
 {
     virtual void copyConstr(void* dst, const void* src) const = 0;
+    virtual void copyOpr(void* dst, const void* src) const = 0;
     virtual void destroy(void* p) const = 0;
 };
 
@@ -64,6 +65,11 @@ struct Destr : public BasicDestr
 {
     virtual void copyConstr(void* dst, const void* src) const {
         new (dst) T(*reinterpret_cast<const T*>(src));
+    }
+    virtual void copyOpr(void* dstp, const void* srcp) const {
+        T& dst(*reinterpret_cast<T*>(dstp));
+        const T& src(*reinterpret_cast<const T*>(srcp));
+        dst = src;
     }
     virtual void destroy(void* p) const {
         reinterpret_cast<T*>(p)->~T();
@@ -154,11 +160,11 @@ public:
     }
     const Variant& operator=(const Variant& that) {
         if (tag_ == that.tag_) {
-            desc().copyConstr(addr(), that.addr());
+            desc().copyOpr(addr(), that.addr());
         } else {
             destroy();
             tag_ = that.tag_;
-            desc().copyConstr(addr(), that.addr());
+            desc().copyOpr(addr(), that.addr());
         }
         return *this;
     }
